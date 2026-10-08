@@ -1,8 +1,9 @@
-// Run: node src/lib/platform.test.ts  (Node 23+ strips the types)
+// Run: node src/lib/platform.test.mjs  (Node 23+ loads the .ts module directly)
 import assert from 'node:assert/strict';
 import { fromUserAgent } from './platform.ts';
 
-const cases: [string, number, string][] = [
+/** @type {[string, number, string][]} */
+const cases = [
 	['Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0 Safari/537.36', 0, 'windows'],
 	['Mozilla/5.0 (Windows NT 10.0; WOW64; rv:130.0) Gecko/20100101 Firefox/130.0', 0, 'windows'],
 	['Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0 Safari/537.36', 0, 'windows-32'],
