@@ -1,6 +1,6 @@
 [package]
 name = "pulahpilih"
-version = "0.1.0"
+version = "0.10.0"
 description = "Sort a folder of photos down to an exact target count"
 license = "GPL-3.0-only"
 authors = ["pozzdol"]
