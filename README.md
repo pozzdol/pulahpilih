@@ -43,6 +43,7 @@ Repository secrets:
 
 - `TAURI_SIGNING_PRIVATE_KEY`: contents of the updater private key
 - `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`: its password (empty if none)
+- `RELEASE_TOKEN`: fine-grained PAT (Contents: read and write on this repo), used to create the release; the built-in token was refused on this repo
 - `CLOUDFLARE_DEPLOY_HOOK`: Cloudflare Pages deploy hook URL, rebuilds the website after a release (optional)
 
 ## License
