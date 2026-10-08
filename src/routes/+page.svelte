@@ -262,7 +262,7 @@
       <div class="app-icon" aria-hidden="true">
         <svg viewBox="0 0 64 64"><rect x="6" y="14" width="40" height="34" rx="6" /><rect x="18" y="20" width="40" height="34" rx="6" /><circle cx="30" cy="31" r="4" /><path d="M22 50l10-11 7 7 6-5 9 9z" /></svg>
       </div>
-      <h1>Photo Sorter</h1>
+      <h1>Pulahpilih</h1>
       <p class="lede">{t.lede}</p>
 
       <div class="group">

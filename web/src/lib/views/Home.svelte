@@ -1,22 +1,17 @@
 <script lang="ts">
-	import Demo from '#lib/Demo.svelte';
-	import { dict } from '#lib/i18n.ts';
-	import type { PageProps } from './$types';
+	import Demo from '../Demo.svelte';
+	import { dict, type Lang } from '../i18n.ts';
+	import type { Release } from '../releases.ts';
+	import type { Doc } from '../content.ts';
+	import { statics } from '../pages.ts';
+	import { AUTHOR, FORMATS } from '../site.ts';
 
-	let { data }: PageProps = $props();
-	const t = $derived(dict[data.lang]);
-	const latest = $derived(data.latest);
+	let { lang, latest = null, usecases = [] }: { lang: Lang; latest?: Release | null; usecases?: Doc[] } = $props();
+	const t = $derived(dict[lang]);
 	const date = (iso: string) =>
-		new Date(iso).toLocaleDateString(data.lang === 'id' ? 'id-ID' : 'en-US', { dateStyle: 'long' });
+		new Date(iso).toLocaleDateString(lang === 'id' ? 'id-ID' : 'en-US', { dateStyle: 'long' });
 	const mb = (bytes: number) => `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 </script>
-
-<svelte:head>
-	<title>{t.meta.title}</title>
-	<meta name="description" content={t.meta.description} />
-	<meta property="og:title" content={t.meta.title} />
-	<meta property="og:description" content={t.meta.description} />
-</svelte:head>
 
 <section class="hero">
 	<h1>{t.hero.title}</h1>
@@ -27,10 +22,10 @@
 				{t.hero.download}
 				<span>{latest.version}, {mb(latest.installer.size)}</span>
 			</a>
-			<a href="/{data.lang}/releases">{t.hero.notes}</a>
+			<a href={statics.releases[lang]}>{t.hero.notes}</a>
 		{:else}
 			<span class="btn disabled" aria-disabled="true">{t.hero.soon}</span>
-			<a href="/{data.lang}/releases">{t.hero.notes}</a>
+			<a href={statics.releases[lang]}>{t.hero.notes}</a>
 		{/if}
 	</div>
 	<div class="demo">
@@ -63,7 +58,32 @@
 	</dl>
 </section>
 
-<section class="download" id="download">
+<section class="facts">
+	<h2>{t.facts.title}</h2>
+	<dl>
+		<div><dt>{t.facts.price}</dt><dd>{t.facts.priceValue}</dd></div>
+		<div><dt>{t.facts.license}</dt><dd>{t.facts.licenseValue}</dd></div>
+		<div><dt>{t.facts.system}</dt><dd>{t.facts.systemValue}</dd></div>
+		<div><dt>{t.facts.formats}</dt><dd>{FORMATS.join(', ')}</dd></div>
+		<div><dt>{t.facts.language}</dt><dd>{t.facts.languageValue}</dd></div>
+		{#if latest}<div><dt>{t.facts.version}</dt><dd>{latest.version}</dd></div>{/if}
+		<div><dt>{t.facts.maker}</dt><dd><a href={AUTHOR.url}>{AUTHOR.name}</a></dd></div>
+	</dl>
+</section>
+
+{#if usecases.length}
+	<section class="usecases">
+		<h2>{t.usecaseSection.title}</h2>
+		<ul>
+			{#each usecases as d (d.path)}
+				<li><a href={d.path}><strong>{d.title}</strong><span>{d.description}</span></a></li>
+			{/each}
+		</ul>
+		<p><a href={statics.usecase[lang]}>{t.usecaseSection.more}</a></p>
+	</section>
+{/if}
+
+<section class="download" id={lang === 'id' ? 'unduh' : 'download'}>
 	<div class="panel">
 		<img src="/icon.svg" alt="" width="72" height="72" />
 		<div class="panel-body">
@@ -211,6 +231,59 @@
 		margin: 4px 0 0;
 		color: var(--secondary);
 		max-width: 44ch;
+	}
+	.facts,
+	.usecases {
+		margin-top: 120px;
+	}
+	.facts dl {
+		margin: 28px 0 0;
+		background: var(--content);
+		border-radius: 12px;
+		box-shadow: 0 0 0 0.5px var(--separator);
+		display: block;
+	}
+	.facts dl div {
+		display: grid;
+		grid-template-columns: minmax(120px, 200px) 1fr;
+		gap: 16px;
+		padding: 12px 20px;
+	}
+	.facts dl div + div {
+		border-top: 0.5px solid var(--separator);
+	}
+	.facts dt {
+		color: var(--secondary);
+		font-weight: 400;
+	}
+	.facts dd {
+		margin: 0;
+		max-width: none;
+		color: var(--label);
+	}
+	.usecases ul {
+		list-style: none;
+		padding: 0;
+		margin: 28px 0 16px;
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+		gap: 24px 32px;
+	}
+	.usecases a strong {
+		display: block;
+		color: var(--label);
+	}
+	.usecases a span {
+		display: block;
+		margin-top: 4px;
+		color: var(--secondary);
+		font-size: 15px;
+	}
+	.usecases li a:hover {
+		text-decoration: none;
+	}
+	.usecases li a:hover strong {
+		color: var(--accent);
 	}
 	.download {
 		margin-top: 120px;

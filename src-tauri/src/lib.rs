@@ -189,7 +189,7 @@ fn undo_moves(moves: &[(PathBuf, PathBuf)]) {
 }
 
 fn cache_dir() -> PathBuf {
-    std::env::temp_dir().join("photo-sorter-previews")
+    std::env::temp_dir().join("pulahpilih-previews")
 }
 
 /// RAW files carry a full-size JPEG preview; extract the largest baseline/progressive one.

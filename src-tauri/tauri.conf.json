@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Photo Sorter",
+  "productName": "Pulahpilih",
   "version": "0.1.0",
-  "identifier": "com.photosorter.desktop",
+  "identifier": "dev.fikriachmad.pulahpilih",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "Photo Sorter",
+        "title": "Pulahpilih",
         "width": 1400,
         "height": 900,
         "minWidth": 720,
@@ -37,7 +37,7 @@
       "binaries/cloudflared"
     ],
     "createUpdaterArtifacts": true,
-    "publisher": "Photo Sorter",
+    "publisher": "Fikri Achmad",
     "shortDescription": "Sortir foto sampai pas dengan target",
     "windows": {
       "webviewInstallMode": {
@@ -68,7 +68,7 @@
     "updater": {
       "requireSignedVersion": true,
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDgxRTIxREE2NDJBRDRCRjAKUldUd1M2MUNwaDNpZ1NwMTc4QWVqQ0NsbUFVbFJwbkExalZBQ25vQy9HM2JhSFdYN2srbjZmV2cK",
-      "endpoints": ["https://github.com/pozzdol/photo-sorter/releases/latest/download/latest.json"],
+      "endpoints": ["https://github.com/pozzdol/pulahpilih/releases/latest/download/latest.json"],
       "windows": { "installMode": "passive" }
     }
   }

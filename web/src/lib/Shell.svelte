@@ -1,42 +1,44 @@
 <script lang="ts">
-	import { page } from '$app/state';
-	import { dict, langs } from '#lib/i18n.ts';
-	import { REPO } from '#lib/releases.ts';
-	import type { LayoutProps } from './$types';
+	import type { Snippet } from 'svelte';
+	import { dict, langs, type Lang } from './i18n.ts';
+	import { statics } from './pages.ts';
+	import { REPO } from './site.ts';
 
-	let { children, data }: LayoutProps = $props();
-	const t = $derived(dict[data.lang]);
-	const base = $derived(`/${data.lang}`);
-	// same page in the other language
-	const switchTo = (l: string) => page.url.pathname.replace(/^\/(id|en)/, `/${l}`);
+	let {
+		lang,
+		path,
+		alternates,
+		children
+	}: { lang: Lang; path: string; alternates: Partial<Record<Lang, string>>; children: Snippet } = $props();
+
+	const t = $derived(dict[lang]);
+	const home = $derived(statics.home[lang]);
 	const links = $derived([
-		{ href: `${base}#download`, label: t.nav.download },
-		{ href: `${base}/releases`, label: t.nav.releases },
-		{ href: `${base}/docs`, label: t.nav.docs },
-		{ href: `${base}/privacy`, label: t.nav.privacy }
+		{ href: lang === 'id' ? '/#unduh' : '/en#download', label: t.nav.download },
+		{ href: statics.usecase[lang], label: t.nav.usecases },
+		{ href: statics.guide[lang], label: t.nav.guides },
+		{ href: statics.compare[lang], label: t.nav.compare },
+		{ href: statics.releases[lang], label: t.nav.releases },
+		{ href: statics.help[lang], label: t.nav.help }
 	]);
+	// the other language's version of this page, or its home page
+	const target = (l: Lang) => alternates[l] ?? statics.home[l];
 </script>
-
-<svelte:head>
-	{#each langs as l (l)}
-		<link rel="alternate" hreflang={l} href={switchTo(l)} />
-	{/each}
-</svelte:head>
 
 <header class="nav">
 	<div class="nav-inner">
-		<a class="brand" href={base}>
+		<a class="brand" href={home}>
 			<img src="/icon.svg" alt="" width="22" height="22" />
-			Photo Sorter
+			<span>Pulahpilih</span>
 		</a>
-		<nav aria-label="Photo Sorter">
+		<nav aria-label="Pulahpilih">
 			{#each links as l (l.href)}
-				<a href={l.href} aria-current={page.url.pathname === l.href ? 'page' : undefined}>{l.label}</a>
+				<a href={l.href} aria-current={path === l.href || path.startsWith(l.href + '/') ? 'page' : undefined}>{l.label}</a>
 			{/each}
 		</nav>
 		<div class="langs" role="group" aria-label="Language">
 			{#each langs as l (l)}
-				<a href={switchTo(l)} class:on={l === data.lang} hreflang={l} lang={l}>{l.toUpperCase()}</a>
+				<a href={target(l)} class:on={l === lang} hreflang={l} lang={l}>{l.toUpperCase()}</a>
 			{/each}
 		</div>
 	</div>
@@ -48,7 +50,7 @@
 
 <footer class="foot">
 	<div class="foot-inner">
-		<p>© {new Date().getFullYear()} Photo Sorter</p>
+		<p>© {new Date().getFullYear()} Pulahpilih. <a href={statics.privacy[lang]}>{t.nav.privacy}</a></p>
 		<p>
 			{t.footer.licenseBody}
 			<a href="https://github.com/cloudflare/cloudflared/blob/master/LICENSE">cloudflared</a>,
@@ -86,14 +88,18 @@
 		font-weight: 600;
 		font-size: 15px;
 		text-decoration: none;
+		flex: none;
 	}
 	nav {
 		flex: 1;
 		display: flex;
 		gap: 20px;
+		overflow-x: auto;
+		scrollbar-width: none;
 	}
 	nav a {
 		color: var(--secondary);
+		white-space: nowrap;
 	}
 	nav a:hover,
 	nav a[aria-current='page'] {
@@ -102,6 +108,7 @@
 	}
 	.langs {
 		display: flex;
+		flex: none;
 		background: var(--fill);
 		border-radius: 7px;
 		padding: 2px;
@@ -136,17 +143,15 @@
 	.foot-inner p:first-child {
 		flex: 1;
 	}
-	@media (max-width: 640px) {
+	@media (max-width: 720px) {
 		.nav-inner {
 			gap: 12px;
 		}
 		nav {
-			gap: 12px;
-			overflow-x: auto;
+			gap: 14px;
 		}
-		.brand {
-			font-size: 0;
-			gap: 0;
+		.brand span {
+			display: none;
 		}
 	}
 </style>

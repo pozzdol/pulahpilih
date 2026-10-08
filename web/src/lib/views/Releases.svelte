@@ -1,30 +1,25 @@
 <script lang="ts">
-	import { dict } from '#lib/i18n.ts';
-	import type { PageProps } from './$types';
+	import { dict, type Lang } from '../i18n.ts';
+	import type { Release } from '../releases.ts';
 
-	let { data }: PageProps = $props();
-	const t = $derived(dict[data.lang]);
+	let { lang, latest = null, releases = [] }: { lang: Lang; latest?: Release | null; releases?: Release[] } = $props();
+	const t = $derived(dict[lang]);
 	const date = (iso: string) =>
-		new Date(iso).toLocaleDateString(data.lang === 'id' ? 'id-ID' : 'en-US', { dateStyle: 'long' });
+		new Date(iso).toLocaleDateString(lang === 'id' ? 'id-ID' : 'en-US', { dateStyle: 'long' });
 </script>
-
-<svelte:head>
-	<title>{t.releases.title}: Photo Sorter</title>
-	<meta name="description" content={t.releases.lead} />
-</svelte:head>
 
 <article class="doc">
 	<h1>{t.releases.title}</h1>
 	<p class="lede">{t.releases.lead}</p>
 
-	{#if data.releases.length}
+	{#if releases.length}
 		<ol class="timeline">
-			{#each data.releases as r (r.version)}
+			{#each releases as r (r.version)}
 				<li id="v{r.version}">
 					<div class="when">
 						<h2>{r.version}</h2>
 						<time datetime={r.date}>{date(r.date)}</time>
-						{#if r.version === data.latest?.version}<span class="tag latest">{t.releases.latest}</span>{/if}
+						{#if r.version === latest?.version}<span class="tag latest">{t.releases.latest}</span>{/if}
 						{#if r.prerelease}<span class="tag">{t.releases.pre}</span>{/if}
 					</div>
 					<div class="what">

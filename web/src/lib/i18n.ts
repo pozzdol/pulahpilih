@@ -3,15 +3,16 @@ export type Lang = (typeof langs)[number];
 
 const id = {
 	langName: 'Bahasa Indonesia',
-	nav: { download: 'Unduh', releases: 'Rilis', docs: 'Panduan', privacy: 'Privasi' },
+	nav: { download: 'Unduh', usecases: 'Kegunaan', guides: 'Artikel', compare: 'Bandingkan', releases: 'Rilis', help: 'Bantuan', privacy: 'Privasi' },
+	home: 'Beranda',
 	meta: {
-		title: 'Photo Sorter untuk Windows',
+		title: 'Pulahpilih: aplikasi sortir foto gratis untuk Windows',
 		description:
 			'Sortir ratusan foto sampai tersisa yang terbaik. Bandingkan tiga foto sekaligus, pilih dengan tombol panah, dan ulangi sampai jumlahnya pas dengan target.'
 	},
 	hero: {
 		title: 'Sortir ratusan foto sampai tersisa yang terbaik.',
-		body: 'Lihat tiga foto sekaligus, tekan → untuk memilih dan ← untuk menolak. Photo Sorter mengulang putaran sampai jumlah foto pas dengan target Anda.',
+		body: 'Lihat tiga foto sekaligus, tekan → untuk memilih dan ← untuk menolak. Pulahpilih mengulang putaran sampai jumlah foto pas dengan target Anda.',
 		download: 'Unduh untuk Windows',
 		soon: 'Segera tersedia',
 		notes: 'Lihat catatan rilis'
@@ -59,7 +60,7 @@ const id = {
 		]
 	},
 	downloadSection: {
-		title: 'Unduh Photo Sorter',
+		title: 'Unduh Pulahpilih',
 		version: (v: string) => `Versi ${v}`,
 		released: 'Dirilis',
 		size: 'Ukuran',
@@ -73,7 +74,7 @@ const id = {
 	},
 	releases: {
 		title: 'Catatan rilis',
-		lead: 'Semua versi Photo Sorter dan perubahannya.',
+		lead: 'Semua versi Pulahpilih, aplikasi sortir foto untuk Windows: fitur baru, perbaikan, tanggal rilis dan link unduh tiap versi.',
 		latest: 'Terbaru',
 		pre: 'Pra-rilis',
 		download: 'Unduh',
@@ -81,8 +82,8 @@ const id = {
 		empty: 'Belum ada rilis. Versi pertama sedang disiapkan.'
 	},
 	docs: {
-		title: 'Panduan',
-		lead: 'Jawaban singkat untuk pertanyaan yang paling sering muncul.',
+		title: 'Bantuan',
+		lead: 'Cara memakai Pulahpilih: memulai sortir, tombol keyboard, ke mana foto dipindah, berbagi ke teman dan cara memperbarui app.',
 		faq: [
 			{
 				q: 'Bagaimana memulai?',
@@ -120,7 +121,7 @@ const id = {
 	},
 	privacy: {
 		title: 'Privasi',
-		lead: 'Photo Sorter bekerja di PC Anda. Foto tidak dikirim ke server kami, karena kami tidak punya server.',
+		lead: 'Pulahpilih bekerja di PC Anda. Foto tidak dikirim ke server kami, karena kami tidak punya server.',
 		points: [
 			{ title: 'Tanpa akun dan tanpa pelacakan', body: 'App tidak mengirim statistik pemakaian atau data pribadi.' },
 			{
@@ -134,6 +135,43 @@ const id = {
 			{ title: 'Situs ini', body: 'Situs ini statis, tanpa cookie dan tanpa analitik.' }
 		]
 	},
+	facts: {
+		title: 'Ringkasan',
+		price: 'Harga',
+		priceValue: 'Gratis, tanpa iklan dan tanpa akun',
+		license: 'Lisensi',
+		licenseValue: 'Open source, GPL-3.0',
+		system: 'Sistem',
+		systemValue: 'Windows 10 dan 11, 64-bit',
+		formats: 'Format',
+		language: 'Bahasa',
+		languageValue: 'Indonesia dan English',
+		version: 'Versi terbaru',
+		maker: 'Pembuat'
+	},
+	usecaseSection: { title: 'Dipakai untuk', more: 'Semua kegunaan' },
+	hubs: {
+		usecase: {
+			title: 'Kegunaan Pulahpilih',
+			lead: 'Contoh alur kerja memilih foto untuk wisuda, pernikahan, event dan foto produk.'
+		},
+		guide: {
+			title: 'Artikel memilih dan menyortir foto',
+			lead: 'Cara memilih foto terbaik, menyortir file RAW dan melibatkan orang lain dalam memilih foto.'
+		},
+		compare: {
+			title: 'Bandingkan Pulahpilih',
+			lead: 'Perbandingan jujur dengan aplikasi lain untuk memilih dan menyortir foto, termasuk kapan aplikasi lain lebih cocok.'
+		}
+	},
+	doc: {
+		updated: 'Diperbarui',
+		ctaTitle: 'Coba Pulahpilih',
+		ctaBody: 'Gratis dan open source untuk Windows 10 dan 11.',
+		ctaButton: 'Unduh Pulahpilih',
+		related: 'Baca juga'
+	},
+	notFound: { title: 'Halaman tidak ditemukan', body: 'Alamatnya mungkin salah ketik atau halamannya sudah dipindah.', home: 'Ke beranda' },
 	footer: {
 		licenses: 'Lisensi pihak ketiga',
 		licenseBody: 'Membawa cloudflared (Apache 2.0) dan PhotoSwipe (MIT).',
@@ -143,15 +181,16 @@ const id = {
 
 const en: typeof id = {
 	langName: 'English',
-	nav: { download: 'Download', releases: 'Releases', docs: 'Guide', privacy: 'Privacy' },
+	nav: { download: 'Download', usecases: 'Use cases', guides: 'Articles', compare: 'Compare', releases: 'Releases', help: 'Help', privacy: 'Privacy' },
+	home: 'Home',
 	meta: {
-		title: 'Photo Sorter for Windows',
+		title: 'Pulahpilih: free photo culling app for Windows',
 		description:
 			'Sort hundreds of photos down to your best. Compare three at a time, pick with the arrow keys, and repeat until you hit your target count.'
 	},
 	hero: {
 		title: 'Sort hundreds of photos down to your best.',
-		body: 'See three photos at once, press → to pick and ← to reject. Photo Sorter runs round after round until you have exactly as many as you need.',
+		body: 'See three photos at once, press → to pick and ← to reject. Pulahpilih runs round after round until you have exactly as many as you need.',
 		download: 'Download for Windows',
 		soon: 'Coming soon',
 		notes: 'Read the release notes'
@@ -196,7 +235,7 @@ const en: typeof id = {
 		]
 	},
 	downloadSection: {
-		title: 'Download Photo Sorter',
+		title: 'Download Pulahpilih',
 		version: (v) => `Version ${v}`,
 		released: 'Released',
 		size: 'Size',
@@ -210,7 +249,7 @@ const en: typeof id = {
 	},
 	releases: {
 		title: 'Release notes',
-		lead: 'Every Photo Sorter version and what changed.',
+		lead: 'Every version of Pulahpilih, the photo culling app for Windows: new features, fixes, release dates and a download link for each.',
 		latest: 'Latest',
 		pre: 'Pre-release',
 		download: 'Download',
@@ -218,8 +257,8 @@ const en: typeof id = {
 		empty: 'No releases yet. The first version is on its way.'
 	},
 	docs: {
-		title: 'Guide',
-		lead: 'Short answers to the questions that come up most.',
+		title: 'Help',
+		lead: 'How to use Pulahpilih: start sorting, keyboard keys, where photos go, sharing with friends and keeping the app up to date.',
 		faq: [
 			{ q: 'How do I start?', a: 'Click Browse to choose a photo folder, set your target count, pick a sort order, then click Start sorting.' },
 			{
@@ -254,7 +293,7 @@ const en: typeof id = {
 	},
 	privacy: {
 		title: 'Privacy',
-		lead: "Photo Sorter runs on your PC. Your photos never reach our servers, because we don't have any.",
+		lead: "Pulahpilih runs on your PC. Your photos never reach our servers, because we don't have any.",
 		points: [
 			{ title: 'No account, no tracking', body: "The app doesn't send usage statistics or personal data." },
 			{
@@ -268,6 +307,43 @@ const en: typeof id = {
 			{ title: 'This website', body: 'This site is static, with no cookies and no analytics.' }
 		]
 	},
+	facts: {
+		title: 'At a glance',
+		price: 'Price',
+		priceValue: 'Free, no ads, no account',
+		license: 'License',
+		licenseValue: 'Open source, GPL-3.0',
+		system: 'System',
+		systemValue: 'Windows 10 and 11, 64-bit',
+		formats: 'Formats',
+		language: 'Languages',
+		languageValue: 'Indonesian and English',
+		version: 'Latest version',
+		maker: 'Made by'
+	},
+	usecaseSection: { title: 'Made for', more: 'All use cases' },
+	hubs: {
+		usecase: {
+			title: 'Pulahpilih use cases',
+			lead: 'Photo picking workflows for graduations, weddings, events and product shoots.'
+		},
+		guide: {
+			title: 'Articles on picking and sorting photos',
+			lead: 'How to pick your best photos, sort RAW files and get others to help you choose.'
+		},
+		compare: {
+			title: 'Compare Pulahpilih',
+			lead: 'Honest comparisons with other photo culling apps, including when another tool is the better fit.'
+		}
+	},
+	doc: {
+		updated: 'Updated',
+		ctaTitle: 'Try Pulahpilih',
+		ctaBody: 'Free and open source for Windows 10 and 11.',
+		ctaButton: 'Download Pulahpilih',
+		related: 'Read next'
+	},
+	notFound: { title: 'Page not found', body: 'The address may have a typo, or the page has moved.', home: 'Go to the home page' },
 	footer: {
 		licenses: 'Third-party licenses',
 		licenseBody: 'Ships cloudflared (Apache 2.0) and PhotoSwipe (MIT).',

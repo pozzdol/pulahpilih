@@ -1,15 +1,10 @@
 <script lang="ts">
-	import { dict } from '#lib/i18n.ts';
-	import type { PageProps } from './$types';
+	import { dict, type Lang } from '../i18n.ts';
+	import type { Release } from '../releases.ts';
 
-	let { data }: PageProps = $props();
-	const t = $derived(dict[data.lang]);
+	let { lang, latest = null, releases = [] }: { lang: Lang; latest?: Release | null; releases?: Release[] } = $props();
+	const t = $derived(dict[lang]);
 </script>
-
-<svelte:head>
-	<title>{t.docs.title}: Photo Sorter</title>
-	<meta name="description" content={t.docs.lead} />
-</svelte:head>
 
 <article class="doc">
 	<h1>{t.docs.title}</h1>

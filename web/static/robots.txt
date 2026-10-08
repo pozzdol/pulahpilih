@@ -1,3 +1,5 @@
-# allow crawling everything by default
+# Search engines and AI crawlers are welcome: everything here is public product information.
 User-agent: *
-Disallow:
+Allow: /
+
+Sitemap: https://pulahpilih.fikriachmad.dev/sitemap.xml

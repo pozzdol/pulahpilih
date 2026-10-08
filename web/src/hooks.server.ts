@@ -1,8 +1,8 @@
 import type { Handle } from '@sveltejs/kit/hooks';
 
-// prerendered pages get the right <html lang> for their /id or /en path
+// Indonesian lives at the root, English under /en: set <html lang> to match
 export const handle: Handle = ({ event, resolve }) =>
 	resolve(event, {
 		transformPageChunk: ({ html }) =>
-			html.replace('<html lang="en">', `<html lang="${event.params.lang ?? 'en'}">`)
+			html.replace('<html lang="en">', `<html lang="${/^\/en(\/|$)/.test(event.url.pathname) ? 'en' : 'id'}">`)
 	});

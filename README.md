@@ -1,8 +1,8 @@
-# Photo Sorter
+# Pulahpilih
 
 Windows app for sorting a folder of photos down to an exact target count. Compare three photos at a time, pick with the arrow keys, and repeat rounds until the `selected` subfolder holds exactly as many photos as you need. Friends can help through a temporary share link.
 
-Download: see the [releases](https://github.com/pozzdol/photo-sorter/releases/latest).
+Download: see the [releases](https://github.com/pozzdol/pulahpilih/releases/latest).
 
 ## Repository layout
 
@@ -44,6 +44,10 @@ Repository secrets:
 - `TAURI_SIGNING_PRIVATE_KEY`: contents of the updater private key
 - `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`: its password (empty if none)
 - `CLOUDFLARE_DEPLOY_HOOK`: Cloudflare Pages deploy hook URL (optional)
+
+## License
+
+GPL-3.0-only, see [LICENSE](LICENSE).
 
 ## Third-party
 

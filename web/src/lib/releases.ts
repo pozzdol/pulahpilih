@@ -1,6 +1,5 @@
 import { marked } from 'marked';
-
-export const REPO = 'pozzdol/photo-sorter';
+import { REPO } from './site.ts';
 
 export type Release = {
 	version: string;
