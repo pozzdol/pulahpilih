@@ -77,4 +77,5 @@ jobs:
           HOOK: ${{ secrets.CLOUDFLARE_DEPLOY_HOOK }}
         run: |
           if [ -z "$HOOK" ]; then echo "CLOUDFLARE_DEPLOY_HOOK not set, skipping"; exit 0; fi
-          curl -fsS -X POST "$HOOK"
+          # a secret pasted from a file may end with a newline
+          curl -fsS -X POST "$(printf '%s' "$HOOK" | tr -d '[:space:]')"
