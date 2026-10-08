@@ -35,7 +35,7 @@
 		font-weight: 700;
 	}
 	p {
-		color: var(--secondary);
+		color: var(--color-ink-2);
 	}
 	.en {
 		margin-top: 24px;

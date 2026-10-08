@@ -31,7 +31,7 @@
 	}
 	.lede {
 		margin-top: 12px;
-		color: var(--secondary);
+		color: var(--color-ink-2);
 		font-size: 19px;
 	}
 	ul {
@@ -41,7 +41,7 @@
 	}
 	li {
 		padding: 20px 0;
-		border-top: 0.5px solid var(--separator);
+		border-top: 0.5px solid var(--color-rule);
 	}
 	li a {
 		font-size: 21px;
@@ -50,6 +50,6 @@
 	}
 	li p {
 		margin-top: 6px;
-		color: var(--secondary);
+		color: var(--color-ink-2);
 	}
 </style>

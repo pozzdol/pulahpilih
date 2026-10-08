@@ -32,17 +32,17 @@
 	}
 	.lede {
 		margin-top: 12px;
-		color: var(--secondary);
+		color: var(--color-ink-2);
 		font-size: 19px;
 	}
 	.faq {
 		margin-top: 40px;
-		background: var(--content);
+		background: var(--color-surface);
 		border-radius: 12px;
-		box-shadow: 0 0 0 0.5px var(--separator);
+		box-shadow: 0 0 0 0.5px var(--color-rule);
 	}
 	details + details {
-		border-top: 0.5px solid var(--separator);
+		border-top: 0.5px solid var(--color-rule);
 	}
 	summary {
 		padding: 16px 20px;
@@ -62,8 +62,8 @@
 		height: 8px;
 		margin-top: 6px;
 		flex: none;
-		border-right: 2px solid var(--tertiary);
-		border-bottom: 2px solid var(--tertiary);
+		border-right: 2px solid var(--color-ink-3);
+		border-bottom: 2px solid var(--color-ink-3);
 		transform: rotate(45deg);
 		transition: transform 0.15s;
 	}
@@ -72,7 +72,7 @@
 	}
 	details p {
 		padding: 0 20px 18px;
-		color: var(--secondary);
+		color: var(--color-ink-2);
 		max-width: var(--measure);
 	}
 </style>

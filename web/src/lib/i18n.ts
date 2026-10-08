@@ -15,6 +15,7 @@ const id = {
 		body: 'Lihat tiga foto sekaligus, tekan → untuk memilih dan ← untuk menolak. Pulahpilih mengulang putaran sampai jumlah foto pas dengan target Anda.',
 		download: 'Unduh untuk Windows',
 		soon: 'Segera tersedia',
+		note: 'Gratis dan open source untuk Windows 10 dan 11',
 		notes: 'Lihat catatan rilis'
 	},
 	demo: {
@@ -172,7 +173,53 @@ const id = {
 		related: 'Baca juga'
 	},
 	notFound: { title: 'Halaman tidak ditemukan', body: 'Alamatnya mungkin salah ketik atau halamannya sudah dipindah.', home: 'Ke beranda' },
+	split: {
+		keys: {
+			title: 'Tiga foto, satu keputusan',
+			body: 'Foto paling kiri sedang dinilai, dua berikutnya sudah terlihat untuk dibandingkan. Tidak perlu membuka foto satu per satu, dan tidak ada yang dihapus: salah tekan cukup diurungkan.',
+			keys: [
+				{ key: '→', label: 'Pilih foto' },
+				{ key: '←', label: 'Tolak foto' },
+				{ key: '⌫', label: 'Urungkan, file ikut kembali' },
+				{ key: 'Spasi', label: 'Perbesar untuk cek fokus' }
+			]
+		},
+		rounds: {
+			title: 'Berhenti tepat di target',
+			body: 'Isi target sekali di awal. Pulahpilih mengulang putaran sampai folder selected berisi persis sebanyak itu, tidak lebih dan tidak kurang.',
+			example: 'Contoh alur dengan target 30 foto',
+			counts: [
+				{ n: '240', label: 'foto di folder' },
+				{ n: '52', label: 'lolos ronde 1' },
+				{ n: '30', label: 'setelah disaring' }
+			]
+		},
+		share: {
+			title: 'Minta pendapat tanpa mengirim file',
+			body: 'Bagikan link dan PIN ke klien atau teman. Mereka menyortir sendiri di browser, lalu Anda melihat foto mana yang paling banyak dipilih dan memutuskan hasil akhirnya.',
+			link: 'Link berbagi',
+			pin: 'PIN',
+			votes: 'suara',
+			note: 'Tampilan contoh. Tamu hanya melihat salinan maksimal 800 KB.'
+		},
+		raw: {
+			title: 'RAW dan JPG tetap berpasangan',
+			body: 'File RAW dan JPG dengan nama sama dihitung satu foto dan selalu dipindah bersama. Pratinjau RAW memakai JPEG bawaan kamera, jadi tetap cepat.'
+		}
+	},
+	alsoTitle: 'Juga',
+	os: {
+		ready: (os: string) => `Terdeteksi ${os}. Installer siap dipasang.`,
+		meta: (v: string, size: string) => `Versi ${v}, ${size}`,
+		requires: 'Pulahpilih berjalan di Windows 10 dan 11, 64-bit.',
+		other: (os: string) => `Perangkat ini terdeteksi ${os}. Installer tidak akan berjalan di sini, tapi Anda tetap bisa mengunduhnya untuk dipindah ke PC Windows.`,
+		mobile: (os: string) => `Perangkat ini terdeteksi ${os}. Pulahpilih adalah aplikasi PC, jadi buka halaman ini di PC Windows. Anda tetap bisa mengunduh installer sekarang.`,
+		old: 'Windows versi ini terlalu lama. Installer butuh Windows 10 atau 11 dan kemungkinan gagal dipasang di sini, tapi tetap bisa diunduh.',
+		bit32: 'Windows 32-bit terdeteksi. Installer hanya untuk Windows 64-bit dan tidak akan berjalan di sini, tapi tetap bisa diunduh.',
+		anyway: 'Tetap unduh'
+	},
 	footer: {
+		tagline: 'aplikasi sortir foto gratis untuk Windows.',
 		licenses: 'Lisensi pihak ketiga',
 		licenseBody: 'Membawa cloudflared (Apache 2.0) dan PhotoSwipe (MIT).',
 		source: 'Kode sumber di GitHub'
@@ -193,6 +240,7 @@ const en: typeof id = {
 		body: 'See three photos at once, press → to pick and ← to reject. Pulahpilih runs round after round until you have exactly as many as you need.',
 		download: 'Download for Windows',
 		soon: 'Coming soon',
+		note: 'Free and open source for Windows 10 and 11',
 		notes: 'Read the release notes'
 	},
 	demo: {
@@ -344,7 +392,53 @@ const en: typeof id = {
 		related: 'Read next'
 	},
 	notFound: { title: 'Page not found', body: 'The address may have a typo, or the page has moved.', home: 'Go to the home page' },
+	split: {
+		keys: {
+			title: 'Three photos, one decision',
+			body: 'The left photo is under review and the next two are already in view for comparison. No opening files one by one, and nothing is ever deleted: a wrong key is one undo away.',
+			keys: [
+				{ key: '→', label: 'Pick the photo' },
+				{ key: '←', label: 'Reject the photo' },
+				{ key: '⌫', label: 'Undo, the file moves back' },
+				{ key: 'Space', label: 'Zoom in to check focus' }
+			]
+		},
+		rounds: {
+			title: 'Stops exactly at your target',
+			body: 'Set the target once. Pulahpilih repeats rounds until the selected folder holds exactly that many photos, no more and no fewer.',
+			example: 'Example run with a target of 30 photos',
+			counts: [
+				{ n: '240', label: 'photos in the folder' },
+				{ n: '52', label: 'kept in round 1' },
+				{ n: '30', label: 'after narrowing' }
+			]
+		},
+		share: {
+			title: 'Get opinions without sending files',
+			body: 'Share a link and PIN with a client or friend. They sort on their own in the browser, then you see which photos got the most votes and make the final call.',
+			link: 'Share link',
+			pin: 'PIN',
+			votes: 'votes',
+			note: 'Example view. Guests only see copies of 800 KB at most.'
+		},
+		raw: {
+			title: 'RAW and JPG stay together',
+			body: 'RAW and JPG files with the same name count as one photo and always move together. RAW previews use the JPEG embedded by the camera, so they stay fast.'
+		}
+	},
+	alsoTitle: 'Also',
+	os: {
+		ready: (os) => `Detected ${os}. The installer is ready to go.`,
+		meta: (v, size) => `Version ${v}, ${size}`,
+		requires: 'Pulahpilih runs on Windows 10 and 11, 64-bit.',
+		other: (os) => `This device looks like ${os}. The installer won't run here, but you can still download it to move it to a Windows PC.`,
+		mobile: (os) => `This device looks like ${os}. Pulahpilih is a desktop app, so open this page on a Windows PC. You can still download the installer now.`,
+		old: 'This Windows version is too old. The installer needs Windows 10 or 11 and will probably fail here, but you can still download it.',
+		bit32: "32-bit Windows detected. The installer is for 64-bit Windows only and won't run here, but you can still download it.",
+		anyway: 'Download anyway'
+	},
 	footer: {
+		tagline: 'free photo culling app for Windows.',
 		licenses: 'Third-party licenses',
 		licenseBody: 'Ships cloudflared (Apache 2.0) and PhotoSwipe (MIT).',
 		source: 'Source code on GitHub'

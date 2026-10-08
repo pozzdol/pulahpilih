@@ -57,7 +57,7 @@
 		flex-wrap: wrap;
 		gap: 6px;
 		font-size: 14px;
-		color: var(--tertiary);
+		color: var(--color-ink-3);
 	}
 	h1 {
 		margin-top: 16px;
@@ -69,7 +69,7 @@
 	}
 	.meta {
 		margin-top: 12px;
-		color: var(--secondary);
+		color: var(--color-ink-2);
 		font-size: 14px;
 	}
 	.prose {
@@ -114,52 +114,52 @@
 		text-align: left;
 		vertical-align: top;
 		padding: 10px 12px;
-		border-bottom: 0.5px solid var(--separator);
+		border-bottom: 0.5px solid var(--color-rule);
 	}
 	.prose :global(th) {
 		font-weight: 600;
-		background: var(--fill);
+		background: var(--color-fill);
 	}
 	.prose :global(code) {
-		font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', Consolas, monospace;
+		font-family: var(--font-mono);
 		font-size: 0.88em;
-		background: var(--fill);
+		background: var(--color-fill);
 		padding: 1px 5px;
 		border-radius: 4px;
 	}
 	.prose :global(blockquote) {
 		margin: 1.2em 0;
 		padding: 0 0 0 16px;
-		border-left: 3px solid var(--accent);
-		color: var(--secondary);
+		border-left: 3px solid var(--color-accent);
+		color: var(--color-ink-2);
 	}
 	.cta {
 		margin-top: 48px;
 		display: flex;
 		align-items: center;
 		gap: 16px;
-		background: var(--content);
+		background: var(--color-surface);
 		border-radius: 14px;
 		padding: 20px 24px;
-		box-shadow: var(--shadow-photo);
+		box-shadow: var(--shadow-card);
 	}
 	.cta div {
 		flex: 1;
 	}
 	.cta p {
-		color: var(--secondary);
+		color: var(--color-ink-2);
 		font-size: 15px;
 	}
 	.btn {
-		background: var(--accent);
-		color: #fff;
+		background: var(--color-accent-fill);
+		color: var(--color-on-signal);
 		padding: 9px 18px;
 		border-radius: 980px;
 		font-weight: 500;
 		white-space: nowrap;
 	}
 	.btn:hover {
-		background: var(--accent-hover);
+		background: var(--color-accent-fill-hover);
 		text-decoration: none;
 	}
 	.related {

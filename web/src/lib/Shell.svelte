@@ -13,8 +13,8 @@
 
 	const t = $derived(dict[lang]);
 	const home = $derived(statics.home[lang]);
+	const download = $derived(lang === 'id' ? '/#unduh' : '/en#download');
 	const links = $derived([
-		{ href: lang === 'id' ? '/#unduh' : '/en#download', label: t.nav.download },
 		{ href: statics.usecase[lang], label: t.nav.usecases },
 		{ href: statics.guide[lang], label: t.nav.guides },
 		{ href: statics.compare[lang], label: t.nav.compare },
@@ -23,25 +23,27 @@
 	]);
 	// the other language's version of this page, or its home page
 	const target = (l: Lang) => alternates[l] ?? statics.home[l];
+	const current = (href: string) => path === href || path.startsWith(href + '/');
 </script>
 
-<header class="nav">
-	<div class="nav-inner">
-		<a class="brand" href={home}>
-			<img src="/icon.svg" alt="" width="22" height="22" />
+<header class="nav-wrap">
+	<nav class="nav" aria-label="Pulahpilih">
+		<a class="brand" href={home} aria-label="Pulahpilih">
+			<img src="/icon.svg" alt="" width="24" height="24" />
 			<span>Pulahpilih</span>
 		</a>
-		<nav aria-label="Pulahpilih">
+		<div class="links">
 			{#each links as l (l.href)}
-				<a href={l.href} aria-current={path === l.href || path.startsWith(l.href + '/') ? 'page' : undefined}>{l.label}</a>
+				<a href={l.href} aria-current={current(l.href) ? 'page' : undefined}>{l.label}</a>
 			{/each}
-		</nav>
+		</div>
 		<div class="langs" role="group" aria-label="Language">
 			{#each langs as l (l)}
 				<a href={target(l)} class:on={l === lang} hreflang={l} lang={l}>{l.toUpperCase()}</a>
 			{/each}
 		</div>
-	</div>
+		<a class="get" href={download}>{t.nav.download}</a>
+	</nav>
 </header>
 
 <main>
@@ -49,108 +51,147 @@
 </main>
 
 <footer class="foot">
-	<div class="foot-inner">
-		<p>© {new Date().getFullYear()} Pulahpilih. <a href={statics.privacy[lang]}>{t.nav.privacy}</a></p>
-		<p>
-			{t.footer.licenseBody}
-			<a href="https://github.com/cloudflare/cloudflared/blob/master/LICENSE">cloudflared</a>,
-			<a href="https://github.com/dimsemenov/PhotoSwipe/blob/master/LICENSE">PhotoSwipe</a>
-		</p>
-		<p><a href="https://github.com/{REPO}">{t.footer.source}</a></p>
-	</div>
+	<p class="sign"><strong>Pulahpilih</strong> {t.footer.tagline}</p>
+	<p class="foot-links">
+		<a href={statics.privacy[lang]}>{t.nav.privacy}</a>
+		<a href="https://github.com/{REPO}">GitHub</a>
+		<a href="https://github.com/{REPO}/blob/main/LICENSE">GPL-3.0</a>
+		{#each langs.filter((l) => l !== lang) as l (l)}
+			<a href={target(l)} hreflang={l} lang={l}>{dict[l].langName}</a>
+		{/each}
+		<span>{t.footer.licenseBody}</span>
+	</p>
 </footer>
 
 <style>
-	.nav {
+	.nav-wrap {
 		position: sticky;
-		top: 0;
+		top: var(--space-xs);
 		z-index: 10;
-		background: var(--toolbar);
-		backdrop-filter: saturate(180%) blur(20px);
-		-webkit-backdrop-filter: saturate(180%) blur(20px);
-		border-bottom: 0.5px solid var(--separator);
+		display: flex;
+		justify-content: center;
+		padding: 0 var(--space-sm);
+		margin-top: var(--space-xs);
 	}
-	.nav-inner {
-		max-width: 1080px;
-		margin: 0 auto;
-		height: 48px;
-		padding: 0 16px;
+	/* N5 floating pill: content-sized, solid surface (no glass), like an app toolbar control */
+	.nav {
 		display: flex;
 		align-items: center;
-		gap: 24px;
-		font-size: 13px;
+		gap: var(--space-sm);
+		max-width: 100%;
+		min-width: 0;
+		padding: var(--space-3xs) var(--space-3xs) var(--space-3xs) var(--space-sm);
+		background: var(--color-surface);
+		border-radius: var(--radius-pill);
+		box-shadow: var(--shadow-control), var(--shadow-card);
+		font-size: var(--text-sm);
 	}
 	.brand {
 		display: flex;
 		align-items: center;
-		gap: 8px;
-		color: var(--label);
+		gap: var(--space-2xs);
+		color: var(--color-ink);
 		font-weight: 600;
-		font-size: 15px;
-		text-decoration: none;
+		white-space: nowrap;
 		flex: none;
 	}
-	nav {
-		flex: 1;
+	.brand:hover {
+		text-decoration: none;
+	}
+	.links {
 		display: flex;
-		gap: 20px;
+		gap: var(--space-sm);
+		min-width: 0;
 		overflow-x: auto;
 		scrollbar-width: none;
 	}
-	nav a {
-		color: var(--secondary);
+	.links a {
+		color: var(--color-ink-2);
 		white-space: nowrap;
 	}
-	nav a:hover,
-	nav a[aria-current='page'] {
-		color: var(--label);
+	.links a:hover,
+	.links a[aria-current='page'] {
+		color: var(--color-ink);
 		text-decoration: none;
 	}
 	.langs {
 		display: flex;
 		flex: none;
-		background: var(--fill);
-		border-radius: 7px;
+		background: var(--color-fill);
+		border-radius: var(--radius-pill);
 		padding: 2px;
 	}
 	.langs a {
-		padding: 1px 8px;
-		border-radius: 5px;
-		color: var(--secondary);
-		font-size: 12px;
-		font-weight: 500;
+		padding: 2px var(--space-2xs);
+		border-radius: var(--radius-pill);
+		color: var(--color-ink-2);
+		font-size: var(--text-xs);
+		font-weight: 600;
+		white-space: nowrap;
+	}
+	.langs a:hover {
 		text-decoration: none;
+		color: var(--color-ink);
 	}
 	.langs a.on {
-		background: var(--control);
-		color: var(--label);
+		background: var(--color-control);
+		color: var(--color-ink);
 		box-shadow: var(--shadow-control);
 	}
-	.foot {
-		border-top: 0.5px solid var(--separator);
-		margin-top: 96px;
+	.get {
+		flex: none;
+		background: var(--color-accent-fill);
+		color: var(--color-accent-ink);
+		font-weight: 600;
+		padding: var(--space-2xs) var(--space-sm);
+		border-radius: var(--radius-pill);
+		white-space: nowrap;
+		transition: background-color var(--dur-short) var(--ease-out);
 	}
-	.foot-inner {
-		max-width: 1080px;
-		margin: 0 auto;
-		padding: 24px 16px 40px;
+	.get:hover {
+		background: var(--color-accent-fill-hover);
+		text-decoration: none;
+	}
+	.get:active {
+		transform: scale(0.97);
+	}
+
+	/* Ft2: one line, hairline above */
+	.foot {
+		max-width: var(--page);
+		margin: var(--space-3xl) auto 0;
+		padding: var(--space-md) var(--space-sm) var(--space-xl);
+		border-top: 1px solid var(--color-rule);
 		display: flex;
 		flex-wrap: wrap;
-		gap: 8px 32px;
-		font-size: 12px;
-		color: var(--secondary);
+		justify-content: space-between;
+		gap: var(--space-2xs) var(--space-lg);
+		font-size: var(--text-xs);
+		color: var(--color-ink-2);
 	}
-	.foot-inner p:first-child {
-		flex: 1;
+	.sign strong {
+		color: var(--color-ink);
 	}
-	@media (max-width: 720px) {
-		.nav-inner {
-			gap: 12px;
-		}
-		nav {
-			gap: 14px;
-		}
+	.foot-links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2xs) var(--space-md);
+	}
+	.foot-links a {
+		white-space: nowrap;
+	}
+
+	@media (max-width: 760px) {
 		.brand span {
+			display: none;
+		}
+		.nav {
+			gap: var(--space-xs);
+			padding-left: var(--space-xs);
+		}
+	}
+	@media (max-width: 420px) {
+		.langs {
 			display: none;
 		}
 	}

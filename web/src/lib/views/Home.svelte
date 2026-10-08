@@ -1,6 +1,11 @@
 <script lang="ts">
+	/* Hallmark · genre: modern-minimal · macrostructure: Split Studio · design-system: design.md · designed-as-app */
+	import { onMount } from 'svelte';
 	import Demo from '../Demo.svelte';
+	import DownloadButton from '../DownloadButton.svelte';
+	import Scene from '../Scene.svelte';
 	import { dict, type Lang } from '../i18n.ts';
+	import { fetchLatest } from '../latest.ts';
 	import type { Release } from '../releases.ts';
 	import type { Doc } from '../content.ts';
 	import { statics } from '../pages.ts';
@@ -8,48 +13,126 @@
 
 	let { lang, latest = null, usecases = [] }: { lang: Lang; latest?: Release | null; usecases?: Doc[] } = $props();
 	const t = $derived(dict[lang]);
+
+	// prerendered data first; ask GitHub only when the build predates the release
+	let fetched = $state<Release | null>(null);
+	const release = $derived(latest ?? fetched);
+	onMount(async () => {
+		if (!latest) fetched = await fetchLatest();
+	});
+
 	const date = (iso: string) =>
 		new Date(iso).toLocaleDateString(lang === 'id' ? 'id-ID' : 'en-US', { dateStyle: 'long' });
-	const mb = (bytes: number) => `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+	const raws = FORMATS.filter((f) => !['JPG', 'PNG', 'WebP'].includes(f));
+	const shareVotes = [
+		{ seed: 3, votes: 3 },
+		{ seed: 6, votes: 2 },
+		{ seed: 2, votes: 0 }
+	];
 </script>
 
+<!-- Split hero: claim + download on the left, the working sorter on the right -->
 <section class="hero">
-	<h1>{t.hero.title}</h1>
-	<p class="lede">{t.hero.body}</p>
-	<div class="cta">
-		{#if latest?.installer}
-			<a class="btn primary" href={latest.installer.url}>
-				{t.hero.download}
-				<span>{latest.version}, {mb(latest.installer.size)}</span>
-			</a>
+	<div class="hero-text">
+		<h1>{t.hero.title}</h1>
+		<p class="lede">{t.hero.body}</p>
+		<DownloadButton {lang} {release} soonLabel={t.hero.soon} />
+		<p class="hero-links">
 			<a href={statics.releases[lang]}>{t.hero.notes}</a>
-		{:else}
-			<span class="btn disabled" aria-disabled="true">{t.hero.soon}</span>
-			<a href={statics.releases[lang]}>{t.hero.notes}</a>
-		{/if}
+			<a href={statics.help[lang]}>{t.nav.help}</a>
+		</p>
 	</div>
-	<div class="demo">
+	<div class="hero-proof">
 		<Demo t={t.demo} />
 	</div>
 </section>
 
-<section class="how">
-	<h2>{t.how.title}</h2>
-	<ol>
-		{#each t.how.steps as s, i (s.title)}
-			<li>
-				<span class="num" aria-hidden="true">{i + 1}</span>
-				<h3>{s.title}</h3>
-				<p>{s.body}</p>
-			</li>
+<!-- Diptychs: each claim gets its proof on the opposite half, alternating sides -->
+<section class="row">
+	<div class="text">
+		<h2>{t.split.keys.title}</h2>
+		<p>{t.split.keys.body}</p>
+	</div>
+	<ul class="proof keys" aria-label={t.split.keys.title}>
+		{#each t.split.keys.keys as k (k.key)}
+			<li><kbd>{k.key}</kbd><span>{k.label}</span></li>
 		{/each}
-	</ol>
+	</ul>
 </section>
 
-<section class="features">
-	<h2>{t.features.title}</h2>
+<section class="row flip">
+	<div class="text">
+		<h2>{t.split.rounds.title}</h2>
+		<p>{t.split.rounds.body}</p>
+		<ol class="steps">
+			{#each t.how.steps as s (s.title)}
+				<li><strong>{s.title}.</strong> {s.body}</li>
+			{/each}
+		</ol>
+	</div>
+	<figure class="proof counts">
+		<figcaption>{t.split.rounds.example}</figcaption>
+		<ol>
+			{#each t.split.rounds.counts as c, i (c.label)}
+				<li class:final={i === t.split.rounds.counts.length - 1}>
+					<b>{c.n}</b><span>{c.label}</span>
+				</li>
+			{/each}
+		</ol>
+	</figure>
+</section>
+
+<section class="row">
+	<div class="text">
+		<h2>{t.split.share.title}</h2>
+		<p>{t.split.share.body}</p>
+		<p><a href={lang === 'id' ? '/artikel/minta-bantuan-memilih-foto' : '/en/articles/get-help-picking-photos'}>{t.doc.related}: {t.split.share.title}</a></p>
+	</div>
+	<figure class="proof share">
+		<div class="share-fields">
+			<div>
+				<span class="label">{t.split.share.link}</span>
+				<code>https://…trycloudflare.com/?t=…</code>
+			</div>
+			<div>
+				<span class="label">{t.split.share.pin}</span>
+				<span class="pin">4821</span>
+			</div>
+		</div>
+		<ul class="votes">
+			{#each shareVotes as v (v.seed)}
+				<li class:on={v.votes > 0}>
+					<div class="thumb"><Scene seed={v.seed} /></div>
+					<span>{v.votes} {t.split.share.votes}</span>
+				</li>
+			{/each}
+		</ul>
+		<figcaption>{t.split.share.note}</figcaption>
+	</figure>
+</section>
+
+<section class="row flip">
+	<div class="text">
+		<h2>{t.split.raw.title}</h2>
+		<p>{t.split.raw.body}</p>
+		<p><a href={lang === 'id' ? '/artikel/sortir-foto-raw-di-windows' : '/en/articles/sort-raw-photos-on-windows'}>{t.doc.related}: {t.split.raw.title}</a></p>
+	</div>
+	<figure class="proof raw">
+		<div class="pair">
+			<span>DSC_0412.ARW</span>
+			<span aria-hidden="true">+</span>
+			<span>DSC_0412.JPG</span>
+		</div>
+		<ul class="chips">
+			{#each raws as f (f)}<li>{f}</li>{/each}
+		</ul>
+	</figure>
+</section>
+
+<section class="also">
+	<h2>{t.alsoTitle}</h2>
 	<dl>
-		{#each t.features.list as f (f.title)}
+		{#each t.features.list.filter((_, i) => i >= 4) as f (f.title)}
 			<div>
 				<dt>{f.title}</dt>
 				<dd>{f.body}</dd>
@@ -66,7 +149,7 @@
 		<div><dt>{t.facts.system}</dt><dd>{t.facts.systemValue}</dd></div>
 		<div><dt>{t.facts.formats}</dt><dd>{FORMATS.join(', ')}</dd></div>
 		<div><dt>{t.facts.language}</dt><dd>{t.facts.languageValue}</dd></div>
-		{#if latest}<div><dt>{t.facts.version}</dt><dd>{latest.version}</dd></div>{/if}
+		{#if release}<div><dt>{t.facts.version}</dt><dd>{release.version}</dd></div>{/if}
 		<div><dt>{t.facts.maker}</dt><dd><a href={AUTHOR.url}>{AUTHOR.name}</a></dd></div>
 	</dl>
 </section>
@@ -83,259 +166,411 @@
 	</section>
 {/if}
 
-<section class="download" id={lang === 'id' ? 'unduh' : 'download'}>
-	<div class="panel">
-		<img src="/icon.svg" alt="" width="72" height="72" />
-		<div class="panel-body">
-			<h2>{t.downloadSection.title}</h2>
-			{#if latest?.installer}
-				<p class="meta">
-					{t.downloadSection.version(latest.version)}<br />
-					{t.downloadSection.released} {date(latest.date)}<br />
-					{t.downloadSection.size} {mb(latest.installer.size)}<br />
-					{t.downloadSection.requires}
-				</p>
-				<a class="btn primary" href={latest.installer.url}>{t.downloadSection.button}</a>
-			{:else}
-				<p class="meta">{t.downloadSection.none}</p>
-			{/if}
-			<p class="small">{t.downloadSection.updates}</p>
-		</div>
+<section class="row download" id={lang === 'id' ? 'unduh' : 'download'}>
+	<div class="text">
+		<h2>{t.downloadSection.title}</h2>
+		<p>{t.downloadSection.updates}</p>
+		<details>
+			<summary>{t.downloadSection.smartTitle}</summary>
+			<p>{t.downloadSection.smartBody}</p>
+		</details>
 	</div>
-	<details class="smartscreen">
-		<summary>{t.downloadSection.smartTitle}</summary>
-		<p>{t.downloadSection.smartBody}</p>
-	</details>
+	<div class="proof panel">
+		<img src="/icon.svg" alt="" width="64" height="64" />
+		{#if release}
+			<p class="panel-meta">
+				{t.downloadSection.version(release.version)}<br />
+				{t.downloadSection.released} {date(release.date)}<br />
+				{t.downloadSection.requires}
+			</p>
+		{:else}
+			<p class="panel-meta">{t.downloadSection.none}</p>
+		{/if}
+		<DownloadButton {lang} {release} soonLabel={t.hero.soon} />
+	</div>
 </section>
 
 <style>
 	section {
-		max-width: 1080px;
+		max-width: var(--page);
 		margin: 0 auto;
-		padding: 0 16px;
-	}
-	.hero {
-		padding-top: 88px;
-		text-align: center;
+		padding: 0 var(--space-sm);
 	}
 	h1 {
-		font-size: clamp(36px, 6vw, 64px);
-		line-height: 1.05;
+		font-size: var(--text-display);
+		line-height: 1.04;
 		font-weight: 700;
-		letter-spacing: -0.025em;
-		max-width: 16ch;
-		margin: 0 auto;
+		letter-spacing: -0.03em;
 		text-wrap: balance;
 	}
-	.lede {
-		margin: 20px auto 0;
-		max-width: 46ch;
-		font-size: clamp(18px, 2.2vw, 21px);
-		color: var(--secondary);
-		text-wrap: pretty;
-	}
-	.cta {
-		margin-top: 32px;
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
-		align-items: center;
-		gap: 12px 24px;
-	}
-	.btn {
-		display: inline-flex;
-		flex-direction: column;
-		align-items: center;
-		padding: 11px 22px;
-		border-radius: 980px;
-		font-size: 17px;
-		font-weight: 500;
-		text-decoration: none;
-	}
-	.btn span {
-		font-size: 12px;
-		font-weight: 400;
-		opacity: 0.8;
-	}
-	.btn.primary {
-		background: var(--accent);
-		color: #fff;
-	}
-	.btn.primary:hover {
-		background: var(--accent-hover);
-		text-decoration: none;
-	}
-	.btn.disabled {
-		background: var(--fill);
-		color: var(--secondary);
-	}
-	.demo {
-		margin: 56px auto 0;
-		max-width: 920px;
-	}
-
 	h2 {
-		font-size: clamp(28px, 4vw, 40px);
+		font-size: var(--text-2xl);
+		line-height: 1.12;
 		font-weight: 700;
 		letter-spacing: -0.02em;
-		line-height: 1.1;
+		text-wrap: balance;
 	}
-	.how {
-		margin-top: 120px;
-	}
-	ol {
-		list-style: none;
-		padding: 0;
-		margin: 32px 0 0;
+
+	/* hero: two halves, text slightly narrower than the proof */
+	.hero {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-		gap: 32px;
-		/* the steps are a real sequence; a hairline ties them into one path */
-		border-top: 0.5px solid var(--separator);
-		padding-top: 28px;
+		grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+		gap: var(--space-xl);
+		align-items: center;
+		padding-top: var(--space-2xl);
 	}
-	.num {
+	.hero-text {
+		display: grid;
+		gap: var(--space-md);
+		justify-items: start;
+		min-width: 0;
+	}
+	.lede {
+		font-size: var(--text-md);
+		color: var(--color-ink-2);
+		max-width: 40ch;
+		text-wrap: pretty;
+	}
+	.hero-links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2xs) var(--space-md);
+		font-size: var(--text-sm);
+	}
+	.hero-links a {
+		white-space: nowrap;
+	}
+	.hero-proof {
+		min-width: 0;
+	}
+
+	/* diptych rows */
+	.row {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		gap: var(--space-xl);
+		align-items: center;
+		margin-top: var(--space-3xl);
+	}
+	.row.flip .text {
+		order: 2;
+	}
+	.text {
+		display: grid;
+		gap: var(--space-sm);
+		align-content: start;
+		min-width: 0;
+	}
+	.text > p {
+		color: var(--color-ink-2);
+		max-width: 46ch;
+	}
+	.proof {
+		margin: 0;
+		min-width: 0;
+		background: var(--color-surface);
+		border-radius: var(--radius-card);
+		box-shadow: var(--shadow-card);
+		padding: var(--space-lg);
+	}
+	figcaption {
+		font-size: var(--text-xs);
+		color: var(--color-ink-2);
+	}
+
+	.keys {
+		list-style: none;
+		display: grid;
+		gap: var(--space-sm);
+	}
+	.keys li {
+		display: flex;
+		align-items: center;
+		gap: var(--space-sm);
+	}
+	kbd {
 		display: inline-grid;
 		place-items: center;
-		width: 28px;
-		height: 28px;
-		border-radius: 50%;
-		background: var(--accent);
-		color: #fff;
-		font-size: 14px;
+		min-width: 44px;
+		height: 32px;
+		padding: 0 var(--space-2xs);
+		border-radius: var(--radius-control);
+		background: var(--color-control);
+		box-shadow: var(--shadow-control);
+		font-size: var(--text-sm);
 		font-weight: 600;
 	}
-	ol h3 {
-		margin-top: 12px;
-		font-size: 19px;
-		font-weight: 600;
+	.keys li:nth-child(1) kbd {
+		background: var(--color-pick);
+		color: var(--color-on-signal);
 	}
-	ol p {
-		margin-top: 6px;
-		color: var(--secondary);
-		max-width: 34ch;
+	.keys li:nth-child(2) kbd {
+		background: var(--color-reject);
+		color: var(--color-on-signal);
 	}
-	.features {
-		margin-top: 120px;
-	}
-	dl {
-		margin: 32px 0 0;
+
+	.steps {
+		margin: var(--space-2xs) 0 0;
+		padding-left: 1.2em;
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-		gap: 28px 48px;
+		gap: var(--space-2xs);
+		color: var(--color-ink-2);
+		font-size: var(--text-sm);
+		max-width: 50ch;
 	}
-	dt {
+	.steps strong {
+		color: var(--color-ink);
+	}
+	.counts ol {
+		list-style: none;
+		margin: var(--space-sm) 0 0;
+		padding: 0;
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: var(--space-sm);
+	}
+	.counts li {
+		display: grid;
+		gap: var(--space-3xs);
+		padding: var(--space-sm);
+		border-radius: var(--radius-control);
+		background: var(--color-fill);
+	}
+	.counts li.final {
+		background: var(--color-accent-fill);
+		color: var(--color-accent-ink);
+	}
+	.counts b {
+		font-family: var(--font-display);
+		font-size: var(--text-xl);
+		font-variant-numeric: tabular-nums;
+		letter-spacing: -0.02em;
+	}
+	.counts span {
+		font-size: var(--text-xs);
+		opacity: 0.8;
+	}
+
+	.share {
+		display: grid;
+		gap: var(--space-md);
+	}
+	.share-fields {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		gap: var(--space-md);
+		align-items: end;
+	}
+	.share-fields > div {
+		display: grid;
+		gap: var(--space-3xs);
+		min-width: 0;
+	}
+	.label {
+		font-size: var(--text-xs);
+		color: var(--color-ink-2);
+		font-weight: 500;
+	}
+	.share code {
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		padding: var(--space-2xs) var(--space-xs);
+		border-radius: var(--radius-control);
+		background: var(--color-fill);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.pin {
+		font-family: var(--font-display);
+		font-size: var(--text-xl);
+		font-weight: 600;
+		letter-spacing: 0.25em;
+		font-variant-numeric: tabular-nums;
+	}
+	.votes {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: var(--space-xs);
+	}
+	.votes li {
+		display: grid;
+		gap: var(--space-3xs);
+		font-size: var(--text-xs);
+		color: var(--color-ink-3);
+	}
+	.votes li.on {
+		color: var(--color-link);
 		font-weight: 600;
 	}
-	dd {
-		margin: 4px 0 0;
-		color: var(--secondary);
-		max-width: 44ch;
+	.thumb {
+		aspect-ratio: 4 / 3;
+		border-radius: var(--radius-control);
+		overflow: hidden;
+		outline: 3px solid transparent;
+		outline-offset: 1px;
 	}
+	.votes li.on .thumb {
+		outline-color: var(--color-accent);
+	}
+
+	.raw {
+		display: grid;
+		gap: var(--space-md);
+	}
+	.pair {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-2xs);
+		font-family: var(--font-mono);
+		font-size: var(--text-sm);
+	}
+	.pair span:not([aria-hidden]) {
+		padding: var(--space-2xs) var(--space-xs);
+		border-radius: var(--radius-control);
+		background: var(--color-fill);
+	}
+	.pair span[aria-hidden] {
+		color: var(--color-ink-3);
+	}
+	.chips {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2xs);
+	}
+	.chips li {
+		padding: var(--space-3xs) var(--space-xs);
+		border-radius: var(--radius-pill);
+		box-shadow: inset 0 0 0 1px var(--color-rule);
+		font-size: var(--text-sm);
+		font-weight: 500;
+	}
+
+	.also,
 	.facts,
 	.usecases {
-		margin-top: 120px;
+		margin-top: var(--space-3xl);
+	}
+	.also dl {
+		margin: var(--space-md) 0 0;
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+		gap: var(--space-md) var(--space-xl);
+	}
+	.also dt {
+		font-weight: 600;
+	}
+	.also dd {
+		margin: var(--space-3xs) 0 0;
+		color: var(--color-ink-2);
+		max-width: 46ch;
 	}
 	.facts dl {
-		margin: 28px 0 0;
-		background: var(--content);
-		border-radius: 12px;
-		box-shadow: 0 0 0 0.5px var(--separator);
-		display: block;
+		margin: var(--space-md) 0 0;
+		background: var(--color-surface);
+		border-radius: var(--radius-card);
+		box-shadow: 0 0 0 1px var(--color-rule);
 	}
 	.facts dl div {
 		display: grid;
-		grid-template-columns: minmax(120px, 200px) 1fr;
-		gap: 16px;
-		padding: 12px 20px;
+		grid-template-columns: minmax(0, 200px) minmax(0, 1fr);
+		gap: var(--space-sm);
+		padding: var(--space-xs) var(--space-md);
 	}
 	.facts dl div + div {
-		border-top: 0.5px solid var(--separator);
+		border-top: 1px solid var(--color-rule);
 	}
 	.facts dt {
-		color: var(--secondary);
-		font-weight: 400;
+		color: var(--color-ink-2);
 	}
 	.facts dd {
 		margin: 0;
-		max-width: none;
-		color: var(--label);
 	}
 	.usecases ul {
 		list-style: none;
+		margin: var(--space-md) 0 var(--space-sm);
 		padding: 0;
-		margin: 28px 0 16px;
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-		gap: 24px 32px;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+		gap: var(--space-md) var(--space-lg);
 	}
 	.usecases a strong {
 		display: block;
-		color: var(--label);
+		color: var(--color-ink);
 	}
 	.usecases a span {
 		display: block;
-		margin-top: 4px;
-		color: var(--secondary);
-		font-size: 15px;
+		margin-top: var(--space-3xs);
+		color: var(--color-ink-2);
+		font-size: var(--text-sm);
 	}
 	.usecases li a:hover {
 		text-decoration: none;
 	}
 	.usecases li a:hover strong {
-		color: var(--accent);
+		color: var(--color-link);
 	}
+
 	.download {
-		margin-top: 120px;
-		scroll-margin-top: 72px;
+		scroll-margin-top: var(--space-3xl);
+		align-items: start;
 	}
 	.panel {
-		display: flex;
-		gap: 24px;
-		align-items: flex-start;
-		background: var(--content);
-		border-radius: 18px;
-		padding: 32px;
-		box-shadow: var(--shadow-photo);
-	}
-	.panel-body {
 		display: grid;
-		gap: 16px;
+		gap: var(--space-md);
 		justify-items: start;
 	}
-	.meta {
-		color: var(--secondary);
-		font-size: 15px;
+	.panel-meta {
+		color: var(--color-ink-2);
+		font-size: var(--text-sm);
 		line-height: 1.7;
 	}
-	.small {
-		color: var(--secondary);
-		font-size: 13px;
-	}
-	.smartscreen {
-		margin-top: 16px;
-		padding: 0 32px;
-		color: var(--secondary);
-		font-size: 15px;
-		max-width: var(--measure);
+	details {
+		color: var(--color-ink-2);
+		font-size: var(--text-sm);
+		max-width: 46ch;
 	}
 	summary {
 		cursor: pointer;
-		color: var(--label);
+		color: var(--color-ink);
+		font-weight: 500;
 	}
-	.smartscreen p {
-		margin-top: 8px;
+	details p {
+		margin-top: var(--space-2xs);
 	}
-	@media (max-width: 640px) {
+
+	@media (max-width: 860px) {
+		.hero,
+		.row {
+			grid-template-columns: minmax(0, 1fr);
+			gap: var(--space-lg);
+		}
+		/* text always leads on one column, whichever side it sat on */
+		.row.flip .text {
+			order: 0;
+		}
 		.hero {
-			padding-top: 48px;
+			padding-top: var(--space-xl);
 		}
-		.panel {
-			flex-direction: column;
-			padding: 24px;
+	}
+	@media (max-width: 480px) {
+		.proof {
+			padding: var(--space-md);
 		}
-		.smartscreen {
-			padding: 0 8px;
+		.counts ol {
+			grid-template-columns: minmax(0, 1fr);
+		}
+		.share-fields,
+		.facts dl div {
+			grid-template-columns: minmax(0, 1fr);
+			gap: var(--space-3xs);
 		}
 	}
 </style>

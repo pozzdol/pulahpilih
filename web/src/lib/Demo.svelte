@@ -102,7 +102,7 @@
 
 <style>
 	.window {
-		background: var(--window);
+		background: var(--color-paper);
 		border-radius: 12px;
 		box-shadow: var(--shadow-window);
 		overflow: hidden;
@@ -111,7 +111,7 @@
 		outline: none;
 	}
 	.window:focus-visible {
-		box-shadow: var(--shadow-window), 0 0 0 4px color-mix(in srgb, var(--accent) 45%, transparent);
+		box-shadow: var(--shadow-window), 0 0 0 4px color-mix(in srgb, var(--color-accent) 45%, transparent);
 	}
 	.bar {
 		display: flex;
@@ -119,23 +119,23 @@
 		justify-content: space-between;
 		gap: 12px;
 		padding: 10px 16px;
-		background: var(--toolbar);
-		border-bottom: 0.5px solid var(--separator);
+		background: var(--color-bar);
+		border-bottom: 0.5px solid var(--color-rule);
 	}
 	.title {
 		display: grid;
 		min-width: 0;
 	}
 	.title span {
-		color: var(--secondary);
+		color: var(--color-ink-2);
 		font-size: 12px;
 	}
 	.tally {
-		color: var(--secondary);
+		color: var(--color-ink-2);
 		white-space: nowrap;
 	}
 	.tally b {
-		color: var(--label);
+		color: var(--color-ink);
 		font-size: 22px;
 		font-weight: 600;
 		font-variant-numeric: tabular-nums;
@@ -157,15 +157,15 @@
 	.frame {
 		flex: 1;
 		min-height: 0;
-		background: var(--content);
+		background: var(--color-surface);
 		border-radius: 10px;
 		padding: 6px;
-		box-shadow: var(--shadow-photo);
+		box-shadow: var(--shadow-card);
 		outline: 3px solid transparent;
 		outline-offset: 2px;
 	}
 	figure.current .frame {
-		outline-color: var(--accent);
+		outline-color: var(--color-accent);
 	}
 	figcaption {
 		display: flex;
@@ -173,7 +173,7 @@
 		align-items: center;
 		min-width: 0;
 		font-size: 11px;
-		color: var(--secondary);
+		color: var(--color-ink-2);
 	}
 	.fname {
 		overflow: hidden;
@@ -181,8 +181,8 @@
 		white-space: nowrap;
 	}
 	.badge {
-		background: var(--accent);
-		color: #fff;
+		background: var(--color-accent-fill);
+		color: var(--color-on-signal);
 		font-weight: 600;
 		padding: 1px 7px;
 		border-radius: 9px;
@@ -194,11 +194,11 @@
 		justify-content: space-between;
 		gap: 12px;
 		padding: 10px 16px;
-		border-top: 0.5px solid var(--separator);
-		background: var(--toolbar);
+		border-top: 0.5px solid var(--color-rule);
+		background: var(--color-bar);
 	}
 	.hint {
-		color: var(--secondary);
+		color: var(--color-ink-2);
 		font-size: 12px;
 	}
 	.actions {
@@ -210,23 +210,23 @@
 		border: none;
 		border-radius: 6px;
 		padding: 6px 14px;
-		background: var(--control);
-		color: var(--label);
+		background: var(--color-control);
+		color: var(--color-ink);
 		box-shadow: var(--shadow-control);
 		cursor: pointer;
 	}
 	.decide {
-		color: #fff;
+		color: var(--color-on-signal);
 		font-weight: 500;
 		display: inline-flex;
 		align-items: center;
 		gap: 8px;
 	}
 	.decide.no {
-		background: var(--red);
+		background: var(--color-reject);
 	}
 	.decide.yes {
-		background: var(--green);
+		background: var(--color-pick);
 	}
 	.decide:active {
 		transform: scale(0.97);
@@ -239,7 +239,7 @@
 		display: inline-grid;
 		place-items: center;
 		border-radius: 4px;
-		background: rgba(255, 255, 255, 0.25);
+		background: var(--color-kbd-on-signal);
 	}
 	.done {
 		height: clamp(232px, calc(34vw + 52px), 392px);
@@ -253,11 +253,11 @@
 		height: 52px;
 	}
 	.done circle {
-		fill: var(--green);
+		fill: var(--color-pick);
 	}
 	.done path {
 		fill: none;
-		stroke: #fff;
+		stroke: var(--color-on-signal);
 		stroke-width: 4.5;
 		stroke-linecap: round;
 		stroke-linejoin: round;

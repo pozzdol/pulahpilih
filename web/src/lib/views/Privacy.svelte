@@ -43,6 +43,6 @@
 	}
 	section p {
 		margin-top: 6px;
-		color: var(--secondary);
+		color: var(--color-ink-2);
 	}
 </style>

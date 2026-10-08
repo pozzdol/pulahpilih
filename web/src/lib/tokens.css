@@ -1,0 +1,98 @@
+/* Hallmark · genre: modern-minimal · macrostructure: Split Studio · theme: custom (Pulahpilih app tokens)
+ * paper oklch(97% 0.002 286) · accent oklch(60.4% 0.218 257) systemBlue · display/body: system UI (SF / Segoe UI Variable)
+ * axes: light / geometric-sans / cool · nav: N5 · footer: Ft2 · enrichment: live demo (Tier A, real UI)
+ * design-system: design.md · designed-as-app
+ */
+
+/* Same palette as the desktop app (src/routes/+page.svelte), expressed in OKLCH. */
+:root {
+	--color-paper: oklch(97% 0.002 286); /* #f5f5f7 */
+	--color-surface: oklch(100% 0 0); /* #fff  cards, demo window body */
+	--color-control: oklch(100% 0 0); /* buttons, inputs */
+	--color-ink: oklch(22.6% 0.004 286); /* #1d1d1f */
+	--color-ink-2: oklch(54.3% 0.008 286); /* #6e6e73 secondary text */
+	--color-ink-3: oklch(75.8% 0.007 286); /* #aeaeb2 tertiary */
+	--color-rule: oklch(0% 0 0 / 0.1);
+	--color-fill: oklch(0% 0 0 / 0.05);
+	--color-bar: oklch(97.4% 0 0 / 0.9); /* app toolbar */
+
+	--color-accent: oklch(60.4% 0.218 257); /* #007aff systemBlue: marks, focus, active photo */
+	--color-accent-fill: oklch(56.6% 0.2 257); /* #0071e3 filled buttons, 4.5:1 with white */
+	--color-accent-fill-hover: oklch(51% 0.19 257);
+	--color-accent-ink: oklch(100% 0 0);
+	--color-link: oklch(51.5% 0.18 257); /* #0066cc text links, 5.6:1 on paper */
+	--color-pick: oklch(73.5% 0.19 147.5); /* #34c759 */
+	--color-reject: oklch(64.8% 0.23 29); /* #ff3b30 */
+	--color-on-signal: oklch(100% 0 0);
+	--color-kbd-on-signal: oklch(100% 0 0 / 0.25); /* keycap inside a coloured button */
+	--color-warn-bg: oklch(96.5% 0.045 88); /* #fff4d6 app notice */
+	--color-warn-ink: oklch(45% 0.1 72); /* #7a5200 */
+	--color-focus: oklch(60.4% 0.218 257 / 0.5);
+
+	--shadow-control: 0 0.5px 1px oklch(0% 0 0 / 0.18), 0 0 0 0.5px oklch(0% 0 0 / 0.08);
+	--shadow-card: 0 1px 3px oklch(0% 0 0 / 0.08), 0 8px 24px oklch(0% 0 0 / 0.06);
+	--shadow-window: 0 0 0 0.5px oklch(0% 0 0 / 0.12), 0 22px 70px oklch(0% 0 0 / 0.16);
+
+	--font-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI Variable Display', 'Segoe UI', system-ui, sans-serif;
+	--font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif;
+	--font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', Consolas, monospace;
+
+	--space-3xs: 0.25rem;
+	--space-2xs: 0.5rem;
+	--space-xs: 0.75rem;
+	--space-sm: 1rem;
+	--space-md: 1.5rem;
+	--space-lg: 2rem;
+	--space-xl: 3rem;
+	--space-2xl: 4.5rem;
+	--space-3xl: 7rem;
+
+	--text-xs: 0.75rem;
+	--text-sm: 0.875rem;
+	--text-base: 1.0625rem;
+	--text-md: 1.1875rem;
+	--text-lg: 1.375rem;
+	--text-xl: 1.75rem;
+	--text-2xl: clamp(1.75rem, 2.4vw + 1rem, 2.5rem);
+	--text-display: clamp(2.375rem, 3.6vw + 1.1rem, 4rem);
+
+	--radius-control: 6px;
+	--radius-card: 12px;
+	--radius-window: 12px;
+	--radius-pill: 980px;
+
+	--ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+	--ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+	--ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+	--dur-short: 160ms;
+	--dur-medium: 220ms;
+
+	--measure: 66ch;
+	--page: 1120px;
+
+	color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--color-paper: oklch(19.5% 0.002 286); /* #161617 */
+		--color-surface: oklch(25.6% 0.004 286); /* #232325 */
+		--color-control: oklch(33.8% 0.004 286); /* #3a3a3c */
+		--color-ink: oklch(97% 0.002 286);
+		--color-ink-2: oklch(71.5% 0.008 286); /* #a1a1a6 */
+		--color-ink-3: oklch(51% 0.008 286); /* #636366 */
+		--color-rule: oklch(100% 0 0 / 0.12);
+		--color-fill: oklch(100% 0 0 / 0.07);
+		--color-bar: oklch(24% 0.003 286 / 0.92);
+		--color-accent: oklch(63.4% 0.2 255); /* #0a84ff */
+		--color-link: oklch(70% 0.15 255);
+		--color-pick: oklch(76.5% 0.2 148);
+		--color-reject: oklch(66.5% 0.22 29);
+		--color-warn-bg: oklch(30% 0.03 80); /* #3a3020 */
+		--color-warn-ink: oklch(88% 0.12 88); /* #ffd36b */
+		--color-focus: oklch(63.4% 0.2 255 / 0.55);
+		--shadow-control: 0 0.5px 1px oklch(0% 0 0 / 0.5), 0 0 0 0.5px oklch(100% 0 0 / 0.08);
+		--shadow-card: 0 1px 3px oklch(0% 0 0 / 0.4), 0 8px 24px oklch(0% 0 0 / 0.3);
+		--shadow-window: 0 0 0 0.5px oklch(100% 0 0 / 0.1), 0 22px 70px oklch(0% 0 0 / 0.55);
+	}
+}
