@@ -1,0 +1,75 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Photo Sorter",
+  "version": "0.1.0",
+  "identifier": "com.photosorter.desktop",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../build"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Photo Sorter",
+        "width": 1400,
+        "height": 900,
+        "minWidth": 720,
+        "minHeight": 520,
+        "center": true
+      }
+    ],
+    "security": {
+      "csp": null,
+      "assetProtocol": {
+        "enable": true,
+        "scope": []
+      }
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": [
+      "nsis"
+    ],
+    "externalBin": [
+      "binaries/cloudflared"
+    ],
+    "createUpdaterArtifacts": true,
+    "publisher": "Photo Sorter",
+    "shortDescription": "Sortir foto sampai pas dengan target",
+    "windows": {
+      "webviewInstallMode": {
+        "type": "embedBootstrapper"
+      },
+      "nsis": {
+        "installMode": "both",
+        "languages": [
+          "Indonesian",
+          "English"
+        ],
+        "displayLanguageSelector": true,
+        "customLanguageFiles": {
+          "Indonesian": "./windows/Indonesian.nsh"
+        },
+        "installerHooks": "./windows/hooks.nsh"
+      }
+    },
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
+  },
+  "plugins": {
+    "updater": {
+      "requireSignedVersion": true,
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDgxRTIxREE2NDJBRDRCRjAKUldUd1M2MUNwaDNpZ1NwMTc4QWVqQ0NsbUFVbFJwbkExalZBQ25vQy9HM2JhSFdYN2srbjZmV2cK",
+      "endpoints": ["https://github.com/pozzdol/photo-sorter/releases/latest/download/latest.json"],
+      "windows": { "installMode": "passive" }
+    }
+  }
+}

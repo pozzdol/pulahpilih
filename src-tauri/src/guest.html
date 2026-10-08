@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Photo Sorter</title>
+<link rel="stylesheet" href="/lib/photoswipe.css">
+<style>
+  :root {
+    --window: #ececec; --content: #fff; --control: #fff; --label: #1d1d1f; --secondary: #6e6e73;
+    --separator: rgba(0,0,0,.1); --fill: rgba(0,0,0,.05); --accent: #007aff; --green: #34c759; --red: #ff3b30;
+    --toolbar: rgba(246,246,246,.8); --yellow-bg: #fff4d6; --yellow-fg: #7a5200;
+    --shadow-control: 0 .5px 1px rgba(0,0,0,.18), 0 0 0 .5px rgba(0,0,0,.08);
+    --shadow-photo: 0 1px 3px rgba(0,0,0,.08), 0 8px 24px rgba(0,0,0,.06);
+    color-scheme: light dark;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --window: #1e1e1e; --content: #282828; --control: #3a3a3c; --label: #f5f5f7; --secondary: #98989d;
+      --separator: rgba(255,255,255,.1); --fill: rgba(255,255,255,.06); --accent: #0a84ff; --green: #30d158; --red: #ff453a;
+      --toolbar: rgba(40,40,40,.8); --yellow-bg: #3a3020; --yellow-fg: #ffd36b;
+      --shadow-control: 0 .5px 1px rgba(0,0,0,.5), 0 0 0 .5px rgba(255,255,255,.08);
+      --shadow-photo: 0 1px 3px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3);
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--window); color: var(--label); font-size: 14px; line-height: 1.4; -webkit-font-smoothing: antialiased; }
+  h1, h2, p { margin: 0; }
+  [hidden] { display: none !important; }
+  button, input { font: inherit; color: var(--label); }
+  :focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 50%, transparent); outline-offset: 1px; }
+  .btn { background: var(--control); border: none; border-radius: 8px; padding: 8px 14px; box-shadow: var(--shadow-control); font-weight: 500; white-space: nowrap; }
+  .btn:disabled { opacity: .4; }
+  .btn.primary { background: var(--accent); color: #fff; }
+  kbd { font: inherit; font-size: 11px; min-width: 18px; height: 18px; padding: 0 4px; display: inline-grid; place-items: center; border-radius: 4px; background: rgba(255,255,255,.25); }
+
+  /* PIN */
+  .login { min-height: 100vh; display: grid; place-items: center; padding: 24px 16px; }
+  .login form { width: min(360px, 100%); display: grid; gap: 14px; text-align: center; }
+  .login h1 { font-size: 22px; font-weight: 700; }
+  .lede { color: var(--secondary); }
+  .group { background: var(--content); border-radius: 10px; box-shadow: 0 0 0 .5px var(--separator); text-align: left; }
+  .group label { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px; }
+  .group label + label { border-top: .5px solid var(--separator); }
+  .group input { border: none; background: none; text-align: right; outline: none; width: 60%; padding: 2px 0; }
+  .group input.pin { font-size: 20px; letter-spacing: .4em; font-variant-numeric: tabular-nums; }
+  .error { color: var(--red); }
+
+  /* Shell */
+  .app { height: 100vh; height: 100dvh; display: flex; flex-direction: column; }
+  header { display: flex; align-items: center; gap: 12px; padding: 10px 16px;
+    background: var(--toolbar); backdrop-filter: saturate(180%) blur(20px); border-bottom: .5px solid var(--separator); }
+  header .title { flex: 1; min-width: 0; }
+  header h1 { font-size: 15px; font-weight: 600; }
+  header p { font-size: 12px; color: var(--secondary); }
+  .tally { display: flex; align-items: baseline; gap: 6px; white-space: nowrap; }
+  .tally b { font-size: 24px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .tally span { color: var(--secondary); font-size: 12px; }
+  .segmented { display: flex; background: var(--fill); border-radius: 7px; padding: 2px; }
+  .segmented button { border: none; background: none; border-radius: 5px; padding: 2px 10px; height: 22px; color: var(--secondary); }
+  .segmented button.on { background: var(--control); color: var(--label); box-shadow: var(--shadow-control); }
+  .segmented svg { width: 20px; height: 14px; fill: currentColor; display: block; }
+  .notice { margin: 12px 16px 0; background: var(--yellow-bg); color: var(--yellow-fg); border-radius: 8px; padding: 8px 12px; }
+
+  /* Sorting */
+  .photos { flex: 1; min-height: 0; display: flex; gap: 12px; padding: 14px 16px; }
+  .photos.vertical { flex-direction: column; }
+  figure { flex: 1; min-width: 0; min-height: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; }
+  .frame { position: relative; flex: 1; min-height: 0; background: var(--content); border-radius: 10px;
+    box-shadow: var(--shadow-photo); outline: 3px solid transparent; outline-offset: 2px; }
+  figure.current .frame { outline-color: var(--accent); }
+  .frame img { position: absolute; inset: 8px; width: calc(100% - 16px); height: calc(100% - 16px); object-fit: contain; cursor: zoom-in; }
+  figcaption { display: flex; gap: 8px; align-items: center; min-width: 0; font-size: 12px; color: var(--secondary); }
+  figcaption span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .badge { background: var(--accent); color: #fff; font-weight: 600; padding: 1px 7px; border-radius: 9px; white-space: nowrap; }
+  footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px;
+    background: var(--toolbar); border-top: .5px solid var(--separator); }
+  .progress { flex: 1; display: flex; align-items: center; gap: 10px; color: var(--secondary); font-variant-numeric: tabular-nums; }
+  .bar { flex: 1; max-width: 240px; height: 4px; border-radius: 2px; background: var(--fill); overflow: hidden; }
+  .bar div { height: 100%; background: var(--accent); transition: width .18s; }
+  .actions { display: flex; gap: 8px; }
+  .zoom kbd, .undo kbd { background: var(--fill); }
+  .decide { min-width: 104px; color: #fff; display: inline-flex; gap: 8px; align-items: center; justify-content: center; }
+  .decide.no { background: var(--red); }
+  .decide.yes { background: var(--green); }
+  .decide:active { transform: scale(.97); }
+
+  /* Summary */
+  .summary { flex: 1; min-height: 0; overflow: auto; padding: 16px; display: grid; gap: 14px; align-content: start; }
+  .summary-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+  .summary-head h2 { font-size: 20px; }
+  .summary-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+  .tile { margin: 0; display: grid; gap: 4px; }
+  .tile .thumb { aspect-ratio: 4 / 3; background: var(--content); border-radius: 8px; box-shadow: var(--shadow-photo); overflow: hidden; cursor: zoom-in; }
+  .tile img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .tile figcaption { font-size: 12px; }
+  .sent { color: var(--green); font-weight: 500; }
+
+  .toast { position: fixed; left: 50%; top: 64px; transform: translateX(-50%); background: var(--content); color: var(--red);
+    padding: 8px 14px; border-radius: 8px; box-shadow: var(--shadow-photo); z-index: 5; }
+
+  @media (max-width: 700px) {
+    .photos, .photos.vertical { flex-direction: column; }
+    figure.current { flex: 3; }
+    .segmented, .progress .bar { display: none; }
+    footer { flex-direction: column; align-items: stretch; }
+    .actions { flex-wrap: wrap; }
+    .actions .btn { flex: 1; }
+    kbd { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { .bar div { transition: none; } }
+</style>
+</head>
+<body>
+<div class="login" id="login" hidden>
+  <form id="login-form">
+    <h1 data-t="title"></h1>
+    <p class="lede" data-t="lede"></p>
+    <div class="group">
+      <label><span data-t="pin"></span><input class="pin" id="pin" inputmode="numeric" maxlength="4" autocomplete="off" required></label>
+      <label><span data-t="name"></span><input id="name" maxlength="30" autocomplete="nickname"></label>
+    </div>
+    <p class="error" id="login-error" hidden></p>
+    <button class="btn primary" data-t="enter"></button>
+  </form>
+</div>
+
+<div class="app" id="app" hidden>
+  <header>
+    <div class="title"><h1 id="mode"></h1><p id="help"></p></div>
+    <div class="segmented" role="radiogroup" id="layout">
+      <button role="radio" data-layout="row"><svg viewBox="0 0 20 14"><rect x="1" y="2" width="5" height="10" rx="1.5"/><rect x="7.5" y="2" width="5" height="10" rx="1.5"/><rect x="14" y="2" width="5" height="10" rx="1.5"/></svg></button>
+      <button role="radio" data-layout="col"><svg viewBox="0 0 20 14"><rect x="4" y=".5" width="12" height="3.6" rx="1.2"/><rect x="4" y="5.2" width="12" height="3.6" rx="1.2"/><rect x="4" y="9.9" width="12" height="3.6" rx="1.2"/></svg></button>
+    </div>
+    <div class="tally"><b id="count"></b><span id="target"></span></div>
+  </header>
+
+  <p class="notice" id="note" hidden></p>
+
+  <section class="photos" id="photos"></section>
+  <footer id="footer">
+    <div class="progress"><span id="round"></span><div class="bar"><div id="bar"></div></div><span id="position"></span></div>
+    <div class="actions">
+      <button class="btn undo" id="undo"><kbd>⌫</kbd> <span data-t="undo"></span></button>
+      <button class="btn zoom" id="zoom"><kbd data-t="spaceKey"></kbd> <span data-t="zoom"></span></button>
+      <button class="btn decide no" id="no"><kbd id="no-key">←</kbd> <span data-t="reject"></span></button>
+      <button class="btn decide yes" id="yes"><span data-t="pick"></span> <kbd id="yes-key">→</kbd></button>
+    </div>
+  </footer>
+
+  <section class="summary" id="summary" hidden>
+    <div class="summary-head">
+      <div><h2 id="summary-title"></h2><p class="lede" id="summary-body"></p></div>
+      <div class="summary-actions">
+        <button class="btn" id="summary-undo" data-t="undoLast"></button>
+        <button class="btn" id="restart" data-t="restart"></button>
+        <button class="btn primary" id="submit" data-t="submit"></button>
+      </div>
+    </div>
+    <p class="sent" id="sent" hidden data-t="sent"></p>
+    <div class="grid" id="grid"></div>
+  </section>
+</div>
+<p class="toast" id="toast" hidden></p>
+
+<script>
+const T = {
+  id: {
+    title: "Bantu pilih foto", lede: "Masukkan PIN dari pemilik foto.", pin: "PIN", name: "Nama (opsional)", enter: "Masuk",
+    badPin: "PIN salah. Coba lagi.", locked: "Terlalu banyak PIN salah. Minta link baru ke pemilik foto.",
+    gone: "Link tidak berlaku atau berbagi sudah dihentikan.", offline: "Koneksi terputus. Coba lagi.",
+    mode: { fill: "Pilih kandidat", reduce: "Saring pilihan", rescue: "Tambah dari yang ditolak" },
+    help: {
+      fill: "Pilih foto yang layak masuk.",
+      reduce: "Pilihan masih lebih dari target. Tolak yang kurang bagus.",
+      rescue: "Foto yang ditolak di ronde sebelumnya. Pilih untuk menambah.",
+    },
+    note: { unchanged: "Ronde sebelumnya tidak mengubah jumlah foto. Pilih lebih ketat.", short: (n) => `Kurang ${n} foto. Pilih lagi dari foto yang ditolak di ronde sebelumnya.` },
+    ofTarget: (n) => `dari target ${n}`, round: (n) => `Ronde ${n}`, position: (i, n) => `${i} dari ${n}`,
+    current: "Sedang dinilai", next: "Berikutnya", reject: "Tolak", pick: "Pilih", zoom: "Perbesar", spaceKey: "Spasi", undo: "Urungkan",
+    summaryTitle: (n) => `${n} foto pilihan Anda`,
+    summaryBody: "Cek lagi pilihan Anda, lalu kirim ke pemilik foto. Foto tidak dipindah sampai pemilik menyetujui.",
+    undoLast: "Urungkan terakhir", restart: "Ulangi dari awal", submit: "Kirim ke pemilik", resubmit: "Kirim ulang",
+    sent: "Terkirim. Anda masih bisa mengulang dan mengirim lagi; kiriman baru menggantikan yang lama.",
+    confirmRestart: "Mulai ulang dari awal? Pilihan Anda saat ini dihapus.",
+  },
+  en: {
+    title: "Help pick photos", lede: "Enter the PIN from the photo owner.", pin: "PIN", name: "Name (optional)", enter: "Join",
+    badPin: "Wrong PIN. Try again.", locked: "Too many wrong PINs. Ask the owner for a new link.",
+    gone: "This link is no longer valid or sharing has stopped.", offline: "Connection lost. Try again.",
+    mode: { fill: "Pick candidates", reduce: "Narrow down", rescue: "Add back from rejects" },
+    help: {
+      fill: "Pick the photos worth keeping.",
+      reduce: "Still more than the target. Reject the weaker ones.",
+      rescue: "Photos rejected last round. Pick to add them back.",
+    },
+    note: { unchanged: "Last round didn't change the count. Be stricter.", short: (n) => `${n} photos short. Pick again from last round's rejects.` },
+    ofTarget: (n) => `of target ${n}`, round: (n) => `Round ${n}`, position: (i, n) => `${i} of ${n}`,
+    current: "Reviewing", next: "Next", reject: "Reject", pick: "Pick", zoom: "Zoom", spaceKey: "Space", undo: "Undo",
+    summaryTitle: (n) => `Your ${n} picks`,
+    summaryBody: "Check your picks, then send them to the owner. Nothing moves until the owner approves.",
+    undoLast: "Undo last", restart: "Start over", submit: "Send to owner", resubmit: "Send again",
+    sent: "Sent. You can still start over and send again; a new submission replaces the old one.",
+    confirmRestart: "Start over? Your current picks are cleared.",
+  },
+};
+const lang = navigator.language.startsWith("id") ? "id" : "en";
+const t = T[lang];
+document.documentElement.lang = lang;
+document.querySelectorAll("[data-t]").forEach((el) => (el.textContent = t[el.dataset.t]));
+
+const $ = (id) => document.getElementById(id);
+const store = {
+  get: (k) => { try { return localStorage.getItem(k) || ""; } catch { return ""; } },
+  set: (k, v) => { try { localStorage.setItem(k, v); } catch {} },
+};
+const token = new URLSearchParams(location.search).get("t") || "";
+let pin = store.get("pin-" + token);
+let name = store.get("name");
+let guest = store.get("guest");
+if (!guest) {
+  guest = Array.from(crypto.getRandomValues(new Uint8Array(12)), (b) => b.toString(16).padStart(2, "0")).join("");
+  store.set("guest", guest);
+}
+let layout = store.get("layout") || "row";
+let names = [];   // photo display names, index = photo id (folder order chosen by the owner)
+let target = 0;
+let P = null;     // virtual sort session
+let pswp = null;
+
+const qs = () => `t=${token}&p=${encodeURIComponent(pin)}`;
+const img = (id) => `/img/${id}?${qs()}`;
+const thumb = (id) => `/thumb/${id}?${qs()}`;
+
+// ---- Virtual session: mirrors Session in lib.rs (fill / reduce / rescue), but only tracks ids ----
+// ponytail: duplicated from the Rust logic; keep both in step when the round rules change.
+function fresh() {
+  return { round: 0, mode: "fill", pool: [], idx: 0, sel: [], hist: [], done: false, startCount: 0, note: "", sent: false };
+}
+function nextRound() {
+  const rejected = P.pool.filter((_, i) => P.hist[i] === false);
+  const prev = [P.mode, P.startCount];
+  const count = P.sel.length;
+  P.hist = []; P.idx = 0; P.note = "";
+  P.done = count === target;
+  if (P.done) return;
+  P.mode = count === 0 ? "fill" : count > target ? "reduce" : "rescue";
+  if (P.round > 0 && prev[0] === P.mode && prev[1] === count) P.note = "unchanged";
+  else if (P.mode === "rescue" && P.round > 0) P.note = "short";
+  const inOrder = (ids) => ids.slice().sort((a, b) => a - b);
+  P.pool = P.mode === "reduce" ? inOrder(P.sel)
+    : P.mode === "rescue" && rejected.length ? rejected
+    : names.map((_, i) => i).filter((i) => !P.sel.includes(i));
+  P.round++;
+  P.startCount = count;
+}
+function decide(yes) {
+  if (!P || P.done || pswp) return;
+  const id = P.pool[P.idx];
+  if (P.mode === "reduce") { if (!yes) P.sel = P.sel.filter((x) => x !== id); }
+  else if (yes) P.sel.push(id);
+  P.hist.push(yes);
+  P.idx++;
+  const over = P.idx >= P.pool.length;
+  // reduce rounds always run to the end; rescue stops as soon as the target is met
+  if (P.sel.length === target && (over || P.mode === "rescue")) P.done = true;
+  else if (over) nextRound();
+  P.sent = false;
+  save(); render();
+}
+function undo() {
+  if (!P || !P.hist.length || pswp) return;
+  const yes = P.hist.pop();
+  P.idx--;
+  const id = P.pool[P.idx];
+  if (P.mode === "reduce") { if (!yes) P.sel.push(id); }
+  else if (yes) P.sel = P.sel.filter((x) => x !== id);
+  P.done = false; P.sent = false;
+  save(); render();
+}
+function save() { store.set("prog-" + token, JSON.stringify(P)); }
+
+// ---- UI ----
+function showLogin(err) {
+  $("app").hidden = true;
+  $("login").hidden = false;
+  $("name").value = name;
+  $("login-error").hidden = !err;
+  $("login-error").textContent = err || "";
+  $("pin").focus();
+}
+function toast(msg) {
+  $("toast").hidden = !msg;
+  $("toast").textContent = msg || "";
+}
+async function api(path, body) {
+  const res = await fetch(`${path}?${qs()}`, body
+    ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }
+    : {});
+  if (res.status === 401) { showLogin(t.badPin); return null; }
+  if (res.status === 423) { showLogin(t.locked); return null; }
+  if (res.status === 404) { showLogin(t.gone); return null; }
+  if (!res.ok) throw new Error(res.status);
+  return res.json();
+}
+
+function figure(id, i) {
+  const f = document.createElement("figure");
+  if (i === 0) f.className = "current";
+  f.innerHTML = `<div class="frame"><img alt="" draggable="false"></div><figcaption><span></span><span></span></figcaption>`;
+  const im = f.querySelector("img");
+  im.src = img(id);
+  im.alt = names[id];
+  im.onclick = () => zoom(im);
+  const [label, fname] = f.querySelectorAll("figcaption span");
+  label.textContent = i === 0 ? t.current : t.next;
+  if (i === 0) label.className = "badge";
+  fname.textContent = names[id];
+  return f;
+}
+
+let shownKey = "";
+function render() {
+  $("login").hidden = true;
+  $("app").hidden = false;
+  $("count").textContent = P.sel.length;
+  $("target").textContent = t.ofTarget(target);
+  $("note").hidden = !P.note || P.done;
+  $("note").textContent = P.note === "short" ? t.note.short(target - P.startCount) : P.note ? t.note.unchanged : "";
+  document.querySelectorAll("#layout button").forEach((b) => {
+    b.classList.toggle("on", b.dataset.layout === layout);
+    b.setAttribute("aria-checked", b.dataset.layout === layout);
+  });
+  const vertical = layout === "col";
+  $("no-key").textContent = vertical ? "↓" : "←";
+  $("yes-key").textContent = vertical ? "↑" : "→";
+
+  $("photos").hidden = $("footer").hidden = P.done;
+  $("summary").hidden = !P.done;
+  if (P.done) return renderSummary();
+
+  $("mode").textContent = t.mode[P.mode];
+  $("help").textContent = t.help[P.mode];
+  $("round").textContent = t.round(P.round);
+  $("position").textContent = t.position(P.idx + 1, P.pool.length);
+  $("bar").style.width = `${(P.idx / P.pool.length) * 100}%`;
+  $("undo").disabled = !P.hist.length;
+  $("photos").classList.toggle("vertical", vertical);
+
+  const ids = P.pool.slice(P.idx, P.idx + 5);
+  const key = ids.join(",");
+  if (key === shownKey) return;
+  shownKey = key;
+  $("photos").replaceChildren(...ids.slice(0, 3).map(figure));
+  ids.slice(3).forEach((id) => { new Image().src = img(id); }); // preload
+}
+
+function renderSummary() {
+  shownKey = "";
+  $("mode").textContent = $("help").textContent = "";
+  $("summary-title").textContent = t.summaryTitle(P.sel.length);
+  $("summary-body").textContent = t.summaryBody;
+  $("summary-undo").hidden = !P.hist.length;
+  $("submit").textContent = P.sent ? t.resubmit : t.submit;
+  $("sent").hidden = !P.sent;
+  const ids = P.sel.slice().sort((a, b) => a - b);
+  $("grid").replaceChildren(...ids.map((id) => {
+    const f = document.createElement("figure");
+    f.className = "tile";
+    f.innerHTML = `<div class="thumb"><img alt="" loading="lazy"></div><figcaption></figcaption>`;
+    const im = f.querySelector("img");
+    im.src = thumb(id);
+    im.alt = names[id];
+    f.querySelector(".thumb").onclick = () => zoomIds(ids, ids.indexOf(id));
+    f.querySelector("figcaption").textContent = names[id];
+    return f;
+  }));
+}
+
+async function openViewer(items, index) {
+  if (pswp) return;
+  const { default: PhotoSwipe } = await import("/lib/photoswipe.js");
+  pswp = new PhotoSwipe({ dataSource: items, index, wheelToZoom: true, loop: false, bgOpacity: 0.94, showHideAnimationType: "fade" });
+  pswp.on("destroy", () => (pswp = null));
+  pswp.init();
+}
+// Zoom the photos on screen (sizes known from the loaded images).
+function zoom(start) {
+  const imgs = [...document.querySelectorAll(".photos .frame img")];
+  if (!imgs.length) return;
+  openViewer(imgs.map((im) => ({ src: im.currentSrc || im.src, width: im.naturalWidth || 1600, height: im.naturalHeight || 1200, alt: im.alt })),
+    Math.max(0, start ? imgs.indexOf(start) : 0));
+}
+// Zoom picks from the summary grid: load each preview first so the viewer knows its size.
+async function zoomIds(ids, index) {
+  const items = await Promise.all(ids.map((id) => new Promise((ok) => {
+    const im = new Image();
+    im.onload = () => ok({ src: im.src, width: im.naturalWidth, height: im.naturalHeight, alt: names[id] });
+    im.onerror = () => ok({ src: im.src, width: 1600, height: 1200, alt: names[id] });
+    im.src = img(id);
+  })));
+  openViewer(items, index);
+}
+
+async function submit() {
+  $("submit").disabled = true;
+  try {
+    const r = await api("/api/submit", { g: guest, name, picks: P.sel });
+    if (r) { P.sent = true; save(); render(); toast(""); }
+  } catch {
+    toast(t.offline);
+  } finally {
+    $("submit").disabled = false;
+  }
+}
+
+async function join() {
+  try {
+    const data = await api("/api/photos");
+    if (!data) return;
+    toast("");
+    names = data.photos;
+    target = data.target;
+    try { P = JSON.parse(store.get("prog-" + token) || "null"); } catch { P = null; }
+    if (!P) { P = fresh(); nextRound(); save(); }
+    render();
+  } catch {
+    toast(t.offline);
+    showLogin(t.offline);
+  }
+}
+
+$("yes").onclick = () => decide(true);
+$("no").onclick = () => decide(false);
+$("undo").onclick = undo;
+$("summary-undo").onclick = undo;
+$("zoom").onclick = () => zoom();
+$("submit").onclick = submit;
+$("restart").onclick = () => {
+  if (!confirm(t.confirmRestart)) return;
+  P = fresh(); nextRound(); save(); render();
+};
+document.querySelectorAll("#layout button").forEach((b) => (b.onclick = () => {
+  layout = b.dataset.layout; store.set("layout", layout); shownKey = ""; render();
+}));
+addEventListener("keydown", (e) => {
+  if (!$("login").hidden || pswp || !P) return; // the viewer owns arrows and Esc while open
+  if (e.key === "Backspace") undo();
+  else if (P.done) return;
+  else if (e.key === " " || e.key === "z") zoom();
+  else if (e.key === "ArrowRight" || e.key === "ArrowUp") decide(true);
+  else if (e.key === "ArrowLeft" || e.key === "ArrowDown") decide(false);
+  else return;
+  e.preventDefault();
+});
+$("login-form").onsubmit = (e) => {
+  e.preventDefault();
+  pin = $("pin").value.trim();
+  name = $("name").value.trim();
+  store.set("pin-" + token, pin);
+  store.set("name", name);
+  join();
+};
+
+if (pin) join(); else showLogin();
+</script>
+</body>
+</html>

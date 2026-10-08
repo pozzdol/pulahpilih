@@ -1,0 +1,79 @@
+# Push a tag like v0.2.0 to publish a release:
+#   1. builds the Windows installer with cloudflared bundled
+#   2. signs the updater artifacts and uploads latest.json for in-app updates
+#   3. publishes a GitHub Release with notes from release-notes/<tag>.md
+#   4. asks Cloudflare Pages to rebuild the website so it lists the new version
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  app:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Tag must match the app version
+        shell: pwsh
+        run: |
+          $version = (Get-Content src-tauri/tauri.conf.json -Raw | ConvertFrom-Json).version
+          if ("v$version" -ne $env:GITHUB_REF_NAME) {
+            throw "Tag $env:GITHUB_REF_NAME does not match tauri.conf.json version $version"
+          }
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - run: npm ci
+
+      - name: Bundle cloudflared
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force src-tauri/binaries | Out-Null
+          Invoke-WebRequest https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.exe `
+            -OutFile src-tauri/binaries/cloudflared-x86_64-pc-windows-msvc.exe
+
+      - name: Read release notes
+        id: notes
+        shell: pwsh
+        run: |
+          $file = "release-notes/$env:GITHUB_REF_NAME.md"
+          $body = if (Test-Path $file) { Get-Content $file -Raw } else { "" }
+          "body<<NOTES_EOF`n$body`nNOTES_EOF" >> $env:GITHUB_OUTPUT
+
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        with:
+          tagName: ${{ github.ref_name }}
+          releaseName: Photo Sorter ${{ github.ref_name }}
+          releaseBody: ${{ steps.notes.outputs.body }}
+          releaseDraft: false
+          prerelease: false
+          includeUpdaterJson: true
+
+  website:
+    needs: app
+    runs-on: ubuntu-latest
+    steps:
+      - name: Rebuild website
+        env:
+          HOOK: ${{ secrets.CLOUDFLARE_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$HOOK" ]; then echo "CLOUDFLARE_DEPLOY_HOOK not set, skipping"; exit 0; fi
+          curl -fsS -X POST "$HOOK"
