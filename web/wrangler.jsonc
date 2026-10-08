@@ -1,0 +1,13 @@
+// Cloudflare Workers static assets: serves the prerendered site in ./build (no Worker code).
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "pulahpilih",
+	"compatibility_date": "2026-10-01",
+	"assets": {
+		"directory": "./build",
+		// /rilis serves rilis.html, /en serves en.html
+		"html_handling": "auto-trailing-slash",
+		// unknown URLs get build/404.html with a real 404 status
+		"not_found_handling": "404-page"
+	}
+}

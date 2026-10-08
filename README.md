@@ -10,7 +10,7 @@ Download: see the [releases](https://github.com/pozzdol/pulahpilih/releases/late
 | --- | --- |
 | `src/` | App UI (SvelteKit, Svelte 5) |
 | `src-tauri/` | App backend (Rust, Tauri 2): sorting rounds, file moves, sharing server |
-| `web/` | Download website (SvelteKit, static), deployed to Cloudflare Pages |
+| `web/` | Download website (SvelteKit, static), deployed to Cloudflare Workers (static assets, `web/wrangler.jsonc`) |
 | `release-notes/` | Notes for each version, used as the GitHub Release body |
 | `.github/workflows/release.yml` | Builds and publishes a release when a `v*` tag is pushed |
 
@@ -37,13 +37,13 @@ npm run dev
 2. Write `release-notes/vX.Y.Z.md`.
 3. Commit, then `git tag vX.Y.Z && git push origin main vX.Y.Z`.
 
-The workflow builds the installer, signs the updater files, publishes the GitHub Release and triggers a website rebuild.
+The workflow builds the installer, signs the updater files, publishes the GitHub Release and redeploys the website.
 
 Repository secrets:
 
 - `TAURI_SIGNING_PRIVATE_KEY`: contents of the updater private key
 - `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`: its password (empty if none)
-- `CLOUDFLARE_DEPLOY_HOOK`: Cloudflare Pages deploy hook URL (optional)
+- `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`: redeploy the website after a release (optional)
 
 ## License
 
